@@ -1,0 +1,28 @@
+{
+    "name": "fundevogel/pcbis2pdf",
+    "type": "library",
+    "description": "pcbis2pdf helper for DTP",
+    "keywords": ["pcbis", "csv", "dtp"],
+    "homepage": "https://github.com/Funde",
+    "license": "GPL v3",
+    "scripts": {
+        "start": "php index.php",
+        "cs-dry": "php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix"
+    },
+    "authors": [
+        {
+            "name": "Martin Folkers",
+            "homepage": "https://twobrain.io",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "doctrine/cache": "^1.8",
+        "getkirby/toolkit": "^2.5",
+        "scriptotek/google-books": "^0.2.4"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14"
+    }
+}

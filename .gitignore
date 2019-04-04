@@ -1,0 +1,7 @@
+/.*cache
+/*.login.json
+/**/*.sla
+/**/*.csv
+/**/*.jpg
+/composer.lock
+/vendor
