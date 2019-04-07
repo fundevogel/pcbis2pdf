@@ -9,13 +9,10 @@ use Doctrine\Common\Cache\FilesystemCache;
 
 $defaults = [
 		'translations' => file_get_contents(basename('translations.json')),
-		'inputCSV' => 'src/csv/*.csv',
-		'outputCSV' => 'src/Titelexport.csv',
-		'input'  => 'src/Titelexport.csv',
+		'input' => 'src/**/*.csv',
 		'output' => 'dist/data.csv',
 		'images' => 'dist/images',
 		'headers' => [
-				// 'category', /* 2 */
 				'AutorIn',
 				'Titel',
 				'Verlag',
@@ -50,37 +47,22 @@ $defaults = [
 		],
 ];
 
-$inputFile  = isset($argv[1]) ? $argv[1] : $defaults['input'];
-$outputFile = isset($argv[2]) ? $argv[2] : $defaults['output'];
-
 
 function path(...$dirs)
 {
     return join(DIRECTORY_SEPARATOR, $dirs);
 }
 
-function mergeCSV(array $input = [], string $output = '')
+function mergeCSV(string $input = 'src/**/*.csv', string $output = 'src/Titelexport.csv')
 {
-    global $defaults;
     $count = 0;
-
-    $input = $defaults['inputCSV'];
-    $output = $defaults['outputCSV'];
 
     foreach (glob($input) as $file) {
         if (($handle = fopen($file, 'r')) !== false) {
             while (($row = fgetcsv($handle, 0, ';')) !== false) {
                 $rowCount = count($row);
                 $array[$count][] = $file;
-
-								/* 1 */
                 unset($array[$count][0]);
-
-								/* 2 */
-								// $category = $array[$count][0];
-								// $category = str::split($category, '/');
-								// $category = str::replace(a::last($category), ['.csv', '2019', '_ab', '_', 'Kleinsten'], ['', '', 'Bücher ab ', '', 'Für die Kleinsten']);
-								// $array[$count][0] = $category;
 
                 for ($i = 0; $i < $rowCount; $i++) {
                     $array[$count][] = $row[$i];
@@ -532,9 +514,9 @@ function convertPrice($string)
 		return $string;
 }
 
-mergeCSV();
+// mergeCSV();
 
-$dataInput = CSV2PHP($inputFile);
+$dataInput = CSV2PHP('src/Titelexport.csv');
 
 $dataOutput = [];
 
@@ -561,7 +543,7 @@ foreach ($dataInput as $array) {
 		$slug = str::slug($title);
 
 		$hasCover = downloadCover($array['ISBN'], $slug);
-		$cover = $hasCover ? path($defaults['images'], $slug . '.jpg') : '';
+		$cover = $hasCover ? path($slug . '.jpg') : '';
 		$coverDNB = $hasCover ? 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'] : '';
 
 		$array = a::update($array, [
@@ -615,4 +597,4 @@ foreach ($dataInput as $array) {
 		$dataOutput[] = sortArray($array);
 }
 
-PHP2CSV($dataOutput, $outputFile);
+PHP2CSV($dataOutput, 'dist/data.csv');

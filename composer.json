@@ -1,12 +1,13 @@
 {
     "name": "fundevogel/pcbis2pdf",
     "type": "library",
-    "description": "pcbis2pdf helper for DTP",
-    "keywords": ["pcbis", "csv", "dtp"],
-    "homepage": "https://github.com/Funde",
+    "description": "pcbis2pdf helper for use with DTP software",
+    "keywords": ["pcbis", "knv", "csv", "dtp"],
+    "homepage": "https://github.com/Fundevogel",
     "license": "GPL v3",
     "scripts": {
         "start": "php index.php",
+        "print": "./ScribusGenerator/ScribusGeneratorCLI.py --single -c ./dist/data.csv -d \";\" -o dist -n result src/example.sla",
         "cs-dry": "php-cs-fixer fix --dry-run --diff",
         "cs-fix": "php-cs-fixer fix"
     },

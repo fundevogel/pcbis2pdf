@@ -17,4 +17,7 @@ mv knv.example.json knv.login.json
 
 Now, start the thing off with `composer start` - good luck!
 
+For the included Scribus example workflow, hit `composer print` and head over to `dist/result.sla`.
+
+
 :copyright: Fundevogel Kinder- und Jugendbuchhandlung
