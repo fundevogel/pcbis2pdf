@@ -4,7 +4,7 @@
     "description": "pcbis.de helper for use with DTP software",
     "keywords": ["pcbis", "knv", "csv", "dtp"],
     "homepage": "https://github.com/Fundevogel",
-    "license": "GPL v3",
+    "license": "GPL-3.0",
     "scripts": {
         "cs-dry": "php-cs-fixer fix --dry-run --diff",
         "cs-fix": "php-cs-fixer fix"
