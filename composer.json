@@ -16,10 +16,17 @@
             "role": "Maintainer"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Fundevogel/ScribusGenerator"
+        }
+    ],
     "require": {
         "doctrine/cache": "^1.8",
         "getkirby/toolkit": "^2.5",
-        "scriptotek/google-books": "^0.2.4"
+        "scriptotek/google-books": "^0.2.4",
+        "berteh/scribusgenerator": "dev-master"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14"
