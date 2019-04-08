@@ -6,8 +6,6 @@
     "homepage": "https://github.com/Fundevogel",
     "license": "GPL v3",
     "scripts": {
-        "start": "php index.php",
-        "print": "./ScribusGenerator/ScribusGeneratorCLI.py --single -c ./dist/data.csv -d \";\" -o dist -n result src/example.sla",
         "cs-dry": "php-cs-fixer fix --dry-run --diff",
         "cs-fix": "php-cs-fixer fix"
     },
@@ -25,5 +23,10 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "PCBIS2PDF\\": "lib/"
+        }
     }
 }

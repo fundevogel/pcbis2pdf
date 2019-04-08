@@ -1,0 +1,43 @@
+{
+    "binding": {
+  				"PP": "Pappband",
+  				"KT": "kartoniert",
+  				"HL": "Halbleinen",
+  				"LN": "Leinen",
+  				"CD": "CD",
+  				"GEB": "gebunden",
+  				"NON": "Nonbook",
+  				"GEH": "geheftet",
+  				"SPL": "Spiel",
+  				"CRD": "Nonbook"
+    },
+    "information": {
+  			"1. Aufl.": "Erstauflage",
+        "Erstauflage 2019": "Erstauflage",
+  			"Sonderausg.": "Sonderausgabe",
+  			"Ill.": "Illustrationen",
+  			"Ktn.": "Karten",
+  			"m. Illustr.": "mit Illustrationen",
+  			"m. zahlr.": "mit zahlreichen",
+  			"m. farb. Illustr.": "mit farbigen Illustrationen",
+        "farb. Abb.": "farbige Abbildungen",
+  			"Farbabb.": "Farbabbildungen",
+  			"Unzerr.": "unzerreißbar",
+  			"Klapp-S.": "Klappseiten",
+  			"bunten Bild.": "bunten Bildern",
+  			"Kinder u. Jugendliche": "Kinder & Jugendliche",
+        "Für Kinder": "für Kinder",
+  			"Geblockt": "geblockt",
+  			"In Box": "in einer Box",
+  			"Schwarz-weiß illustriert": "schwarz-weiß illustriert",
+  			"s/w": "schwarz-weiß",
+  			"m. Comics": "mit Comics",
+  			"In Kassette": "in einer Kassette",
+        "JEWELCASE": "Jewelcase",
+        "Durchgehend": "durchgehend",
+        "u. ": "und ",
+        "Mit ": "mit ",
+        "In ": "in ",
+        "Min, " : "Minuten, "
+    }
+}

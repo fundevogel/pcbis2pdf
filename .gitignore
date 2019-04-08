@@ -1,5 +1,2 @@
-/.*cache
-/*.login.json
 /composer.lock
 /vendor
-/dist
