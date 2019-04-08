@@ -1,7 +1,7 @@
 {
     "name": "fundevogel/pcbis2pdf",
     "type": "library",
-    "description": "pcbis2pdf helper for use with DTP software",
+    "description": "pcbis.de helper for use with DTP software",
     "keywords": ["pcbis", "knv", "csv", "dtp"],
     "homepage": "https://github.com/Fundevogel",
     "license": "GPL v3",
