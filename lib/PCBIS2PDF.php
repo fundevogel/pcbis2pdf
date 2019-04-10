@@ -385,7 +385,7 @@ class PCBIS2PDF
                     break;
                 }
             }
-            return $dataOutput;
+            return a::sort($dataOutput, 'AutorIn', 'asc');
         } catch (\Exception $e) {
             echo 'Error: ' . $e->getMessage();
         }
