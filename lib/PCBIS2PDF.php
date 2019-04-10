@@ -26,13 +26,19 @@ class PCBIS2PDF
 {
 
     /**
-     * Current version number of BookRecommendations
+     * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.3';
+    const VERSION = '0.4';
 
-    public function __construct()
+    public $imagePath = 'dist/images';
+    
+    public function __construct(string $imagePath = null, string $lang = 'de')
     {
-        $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/de.json'), true);
+        if ($imagePath !== null) {
+            $this->setImagePath($imagePath);
+        }
+
+        $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
 
         /**
          * CSV file headers in order of use when exporting with pcbis.de
@@ -40,7 +46,6 @@ class PCBIS2PDF
          * @var array
          */
         $this->headers = [
-            // 'category', /* 2 */
             'AutorIn',
             'Titel',
             'Verlag',
@@ -56,35 +61,48 @@ class PCBIS2PDF
         ];
     }
 
-    // public function setHeaders($headers)
-    // {
-    //     $this->headers = $headers;
-    // }
-    //
-    // public function getHeaders()
-    // {
-    //     return $this->headers;
-    // }
+
+    /**
+     * Setters & getters
+     */
+    public function setImagePath(string $imagePath)
+    {
+        $this->imagePath = $imagePath;
+    }
+
+    public function getImagePath()
+    {
+        return $this->imagePath;
+    }
+
+    public function setHeaders($headers)
+    {
+        $this->headers = $headers;
+    }
+
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
 
 
     /**
      * Merges CSV files
      *
-     * @param String $input - Source CSV files to read data from
-     * @param String $output - Source CSV files to write data to
-     * @param String $delimiter - Delimiting character (optional)
+     * @param Array $input - Source CSV files to read data from
+     * @param String $output - Destination CSV file to write data to
+     * @param Boolean $hasHeader - Specifies whether or not a header row is present in source CSV files
+     * @param String $delimiter - Delimiting character
      * @return Array
      */
-    public function mergeCSV(string $input = './src/csv/*.csv', string $output = './src/Titelexport.csv')
+    public function mergeCSV(array $input, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ';')
     {
         $count = 0;
 
-        foreach (glob($input) as $file) {
+        foreach ($input as $file) {
             if (($handle = fopen($file, 'r')) !== false) {
                 while (($row = fgetcsv($handle, 0, ';')) !== false) {
                     $rowCount = count($row);
-                    $array[$count][] = $file;
-                    unset($array[$count][0]);
 
                     for ($i = 0; $i < $rowCount; $i++) {
                         $array[$count][] = $row[$i];
@@ -95,10 +113,20 @@ class PCBIS2PDF
             }
         }
 
+        if ($hasHeader == true) {
+            $headerArray = [];
+
+            foreach ($array as $key => $value) {
+                $headerArray[implode($value)] = $value;
+            }
+
+            $array = array_values($headerArray);
+        }
+
         $handle = fopen($output, 'w');
 
         foreach ($array as $fields) {
-            fputcsv($handle, $fields, ';');
+            fputcsv($handle, $fields, $delimiter);
         }
 
         fclose($handle);
@@ -109,7 +137,7 @@ class PCBIS2PDF
      * Turns CSV data into a PHP array
      *
      * @param String $input - Source CSV file to read data from
-     * @param String $delimiter - Delimiting character (optional)
+     * @param String $delimiter - Delimiting character
      * @return Array
      */
     public function CSV2PHP(string $input = './src/Titelexport.csv', string $delimiter = ';')
@@ -138,9 +166,9 @@ class PCBIS2PDF
     /**
      * Turns a PHP array into CSV file
      *
-     * @param Array $data - Destination CSV file to write data to
+     * @param Array $data - Source PHP array to read data from
      * @param String $output - Destination CSV file to write data to
-     * @param String $delimiter - Delimiting character (optional)
+     * @param String $delimiter - Delimiting character
      * @return Stream
      */
     public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $delimiter = ';')
@@ -267,7 +295,7 @@ class PCBIS2PDF
             $fileName = $isbn;
         }
 
-        $file = './dist/images/' . $fileName . '.jpg';
+        $file = $this->imagePath . '/' . $fileName . '.jpg';
 
         if (file_exists($file)) {
             echo 'Book cover for ' . $isbn . ' already exists, skipping ..' . "\n";
@@ -383,10 +411,10 @@ class PCBIS2PDF
                 $dataOutput = call_user_func([$classObject, 'process']);
 
                 if ($dataOutput) {
-                    echo 'Operation was successful!' . "\n";
                     break;
                 }
             }
+            echo 'Operation was successful!' . "\n";
             return a::sort($dataOutput, 'AutorIn', 'asc');
         } catch (\Exception $e) {
             echo 'Error: ' . $e->getMessage();
