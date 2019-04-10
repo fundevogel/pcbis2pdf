@@ -26,12 +26,18 @@ class PCBIS2PDF
 {
 
     /**
-     * Current version number of BookRecommendations
+     * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.3';
+    const VERSION = '0.4';
 
-    public function __construct(string $lang = 'de')
+    public $imagePath = 'dist/images';
+    
+    public function __construct(string $imagePath = null, string $lang = 'de')
     {
+        if ($imagePath !== null) {
+            $this->setImagePath($imagePath);
+        }
+
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
 
         /**
@@ -53,6 +59,20 @@ class PCBIS2PDF
             'Zusatz',
             'Kommentar'
         ];
+    }
+
+
+    /**
+     * Setters & getters
+     */
+    public function setImagePath(string $imagePath)
+    {
+        $this->imagePath = $imagePath;
+    }
+
+    public function getImagePath()
+    {
+        return $this->imagePath;
     }
 
     public function setHeaders($headers)
@@ -275,7 +295,7 @@ class PCBIS2PDF
             $fileName = $isbn;
         }
 
-        $file = './dist/images/' . $fileName . '.jpg';
+        $file = $this->imagePath . '/' . $fileName . '.jpg';
 
         if (file_exists($file)) {
             echo 'Book cover for ' . $isbn . ' already exists, skipping ..' . "\n";
@@ -391,10 +411,10 @@ class PCBIS2PDF
                 $dataOutput = call_user_func([$classObject, 'process']);
 
                 if ($dataOutput) {
-                    echo 'Operation was successful!' . "\n";
                     break;
                 }
             }
+            echo 'Operation was successful!' . "\n";
             return a::sort($dataOutput, 'AutorIn', 'asc');
         } catch (\Exception $e) {
             echo 'Error: ' . $e->getMessage();
