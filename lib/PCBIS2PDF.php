@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PCBIS2PDF - Funny subtitle
+ * PCBIS2PDF - pcbis.de helper class
  *
  * @link https://github.com/Fundevogel/pcbis2pdf
  * @license https://www.gnu.org/licenses/gpl-3.0.txt GPL v3
@@ -13,9 +13,11 @@ use a;
 use str;
 
 /**
- * Class BookRecommendations
+ * Class PCBIS2PDF
  *
- * Funny description
+ * Retrieves information from pcbis.de exported CSV files, sorts them out,
+ * downloads book covers, enriches the results by adding information from
+ * other sources, such as KNV's API (optionally, GoogleBooks API support)
  *
  * @package PCBIS2PDF
  */
@@ -26,7 +28,7 @@ class PCBIS2PDF
     /**
      * Current version number of BookRecommendations
      */
-    const VERSION = '1.0.0';
+    const VERSION = '0.3';
 
     public function __construct()
     {
