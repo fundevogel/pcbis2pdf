@@ -28,7 +28,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.5';
+    const VERSION = '0.5.1';
 
     public $imagePath = './dist/images';
     public $cachePath = './.cache';
@@ -40,7 +40,7 @@ class PCBIS2PDF
         }
 
         if ($cachePath !== null) {
-            $this->setImagePath($cachePath);
+            $this->setCachePath($cachePath);
         }
 
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
