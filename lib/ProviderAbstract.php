@@ -16,11 +16,15 @@ abstract class ProviderAbstract
 {
     protected $dataInput;
 
-    public function __construct(array $dataInput)
+    public function __construct(array $dataInput, string $cachePath)
     {
+        // Array holding data to read from
         $this->dataInput = $dataInput;
 
-        $this->imagePath = 'dist/images';
+        // Defines path for cached data
+        $this->cachePath = $cachePath;
+
+        // Array holding desirable header sort order
         $this->sortOrder = [
             'AutorIn',
             'Titel',
@@ -53,7 +57,7 @@ abstract class ProviderAbstract
 
     protected function accessCache($isbn, $identifier)
     {
-        $driver = new FilesystemCache('./.cache');
+        $driver = new FilesystemCache($this->cachePath);
         $id = implode('-', [$identifier, md5($isbn)]);
 
         if ($driver->contains($id)) {
