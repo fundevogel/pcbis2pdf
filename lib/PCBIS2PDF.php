@@ -28,14 +28,19 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.4';
+    const VERSION = '0.5';
 
-    public $imagePath = 'dist/images';
+    public $imagePath = './dist/images';
+    public $cachePath = './.cache';
     
-    public function __construct(string $imagePath = null, string $lang = 'de')
+    public function __construct(string $imagePath = null, string $cachePath = null, string $lang = 'de')
     {
         if ($imagePath !== null) {
             $this->setImagePath($imagePath);
+        }
+
+        if ($cachePath !== null) {
+            $this->setImagePath($cachePath);
         }
 
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
@@ -73,6 +78,16 @@ class PCBIS2PDF
     public function getImagePath()
     {
         return $this->imagePath;
+    }
+
+    public function setCachePath(string $cachePath)
+    {
+        $this->cachePath = $cachePath;
+    }
+
+    public function getCachePath()
+    {
+        return $this->cachePath;
     }
 
     public function setHeaders($headers)
@@ -402,7 +417,10 @@ class PCBIS2PDF
                     continue;
                 }
 
-                $classObject = new $className($data);
+                $classObject = new $className(
+                    $data,
+                    $this->cachePath
+                );
 
                 if (!$classObject instanceof ProviderAbstract || !is_callable([$classObject, 'process'])) {
                     continue;
