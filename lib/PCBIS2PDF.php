@@ -28,12 +28,32 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.5.1';
+    const VERSION = '0.6.0';
 
     public $imagePath = './dist/images';
     public $cachePath = './.cache';
-    
-    public function __construct(string $imagePath = null, string $cachePath = null, string $lang = 'de')
+
+    /**
+     * CSV file headers in order of use when exporting with pcbis.de
+     *
+     * @var array
+     */
+    public $headers = [
+        'AutorIn',
+        'Titel',
+        'Verlag',
+        'ISBN',
+        'Einband',
+        'Preis',
+        'a',
+        'b',
+        'c',
+        'Informationen',
+        'Zusatz',
+        'Kommentar'
+    ];
+
+    public function __construct(string $imagePath = null, string $cachePath = null, array $headers = null, string $lang = 'de')
     {
         if ($imagePath !== null) {
             $this->setImagePath($imagePath);
@@ -43,27 +63,11 @@ class PCBIS2PDF
             $this->setCachePath($cachePath);
         }
 
-        $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
+        if ($headers !== null) {
+            $this->setHeaders($headers);
+        }
 
-        /**
-         * CSV file headers in order of use when exporting with pcbis.de
-         *
-         * @var array
-         */
-        $this->headers = [
-            'AutorIn',
-            'Titel',
-            'Verlag',
-            'ISBN',
-            'Einband',
-            'Preis',
-            'a',
-            'b',
-            'c',
-            'Informationen',
-            'Zusatz',
-            'Kommentar'
-        ];
+        $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
     }
 
 
@@ -90,7 +94,7 @@ class PCBIS2PDF
         return $this->cachePath;
     }
 
-    public function setHeaders($headers)
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
     }
@@ -186,7 +190,7 @@ class PCBIS2PDF
      * @param String $delimiter - Delimiting character
      * @return Stream
      */
-    public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $delimiter = ';')
+    public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $delimiter = ',')
     {
         $header = null;
 

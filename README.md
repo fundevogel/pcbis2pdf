@@ -9,9 +9,7 @@ In the future, this script should automatize the generation of our [list of reco
 
 
 ## How
-This is a WIP and **far from finished** ~~(*Do you even OOP?*)~~: It ~~won't be~~ is now availabe through Composer ~~or anything~~ and everything.
-
-It's more of a living boilerplate, if you will - feel free to adapt it to suit your needs.
+This is a WIP, by definition constantly changing: It's more of a living boilerplate, if you will - feel free to adapt it to suit your needs (available for Composer, see [here](https://packagist.org/packages/fundevogel/pcbis2pdf)):
 
 ```php
 <?php
@@ -33,7 +31,7 @@ However, if you want to get started, just provide your credentials (see example 
 ```json
 "scripts": {
     "start": "php index.php",
-    "print": "./vendor/berteh/scribusgenerator/ScribusGeneratorCLI.py --single -c ./dist/data.csv -d \";\" -o dist -n result src/example.sla",
+    "print": "./vendor/berteh/scribusgenerator/ScribusGeneratorCLI.py --single -c ./dist/data.csv -o dist -n result src/example.sla",
 }
 ```
 
