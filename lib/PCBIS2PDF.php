@@ -11,6 +11,7 @@ namespace PCBIS2PDF;
 
 use a;
 use str;
+use PCBIS2PDF\Providers\KNV;
 
 /**
  * Class PCBIS2PDF
@@ -34,7 +35,7 @@ class PCBIS2PDF
     public $cachePath = './.cache';
 
     /**
-     * CSV file headers in order of use when exporting with pcbis.de
+     * CSV input file headers in order of use when exporting with pcbis.de
      *
      * @var array
      */
@@ -53,18 +54,43 @@ class PCBIS2PDF
         'Kommentar'
     ];
 
-    public function __construct(string $imagePath = null, string $cachePath = null, array $headers = null, string $lang = 'de')
+    /**
+     * Sort order for CSV output file headers
+     *
+     * @var array
+     */
+    public $sortOrder = [
+        'AutorIn',
+        'Titel',
+        'Untertitel',
+        'Verlag',
+        'Mitwirkende',
+        'Preis',
+        'Erscheinungsjahr',
+        'ISBN',
+        'Altersempfehlung',
+        'Inhaltsbeschreibung',
+        'Informationen',
+        'Einband',
+        'Seitenzahl',
+        'Abmessungen',
+        'Cover',
+        'Cover DNB',
+        'Cover KNV',
+    ];
+
+    public function __construct(string $imagePath = null, array $headers = null, array $sortOrder = null, string $lang = 'de')
     {
         if ($imagePath !== null) {
             $this->setImagePath($imagePath);
         }
 
-        if ($cachePath !== null) {
-            $this->setCachePath($cachePath);
-        }
-
         if ($headers !== null) {
             $this->setHeaders($headers);
+        }
+
+        if ($sortOrder !== null) {
+            $this->setHeaders($sortOrder);
         }
 
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
@@ -102,6 +128,16 @@ class PCBIS2PDF
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    public function setSortOrder(array $sortOrder)
+    {
+        $this->sortOrder = $sortOrder;
+    }
+
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 
 
@@ -349,15 +385,24 @@ class PCBIS2PDF
 
 
     /**
-     * Enriches an array with specific provider information
+     * Enriches an array with KNV information
      *
      * @param Array $dataInput - Input that should be processed
+     * @param String $cachePath - Path for local cache results
      * @return Array
      */
-    public function process(array $dataInput = null)
+    public function process(array $dataInput = null, string $cachePath = null, array $sortOrder = null, bool $includeProviders = false)
     {
         if ($dataInput == null) {
             $dataInput = $this->CSV2PHP();
+        }
+
+        if ($cachePath !== null) {
+            $this->setCachePath($cachePath);
+        }
+
+        if ($sortOrder !== null) {
+            $this->setSortOrder($sortOrder);
         }
 
         $dataOutput = [];
@@ -407,36 +452,73 @@ class PCBIS2PDF
             $data[] = $array;
         }
 
+        try {
+            $KNV = new KNV(
+              $this->cachePath
+              $this->sortOrder
+            );
+
+            $dataOutput = $KNV->process($data);
+
+            if ($includeProviders == true) {
+                $dataOutput = includeProviders($dataOutput);
+            }
+        } catch (\Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+
+        echo 'Operation was successful!' . "\n";
+        return a::sort($dataOutput, 'AutorIn', 'asc');
+    }
+
+    /**
+     * Enriches an array with specific provider information
+     *
+     * @param Array $dataInput - Input that should be processed
+     * @param String $cachePath - Path for local cache results
+     * @return Array
+     */
+    private function includeProviders($dataInput = null, string $cachePath = null)
+    {
+        if ($dataInput == null) {
+            throw new \Exception('No data given to process!');
+        }
+
+        if ($cachePath == null) {
+          throw new \Exception('No cache path specified!');
+        }
+
         $providers = array_map(function ($filePath) {
             $fileName = basename($filePath, '.php');
             return $fileName;
         }, glob(__DIR__ . '/Providers/*.php'));
 
+        // KNV is used by default, so we don't need to include it
+        unset($providers[array_search('KNV', $providers)]);
+
         try {
             foreach ($providers as $provider) {
-                $providerName = ucfirst($provider);
+                $providerName = ucfirst(strtolower($provider));
                 $className = 'PCBIS2PDF\\Providers\\' . $providerName;
 
                 if (!class_exists($className)) {
                     continue;
                 }
 
-                $classObject = new $className(
-                    $data,
-                    $this->cachePath
-                );
+                $classObject = new $className($this->cachePath);
 
                 if (!$classObject instanceof ProviderAbstract || !is_callable([$classObject, 'process'])) {
                     continue;
                 }
 
-                $dataOutput = call_user_func([$classObject, 'process']);
+                $data = $classObject->process($dataInput);
 
-                if ($dataOutput) {
+                if ($data) {
+                    echo 'Operation by ' . $providerName . ' was successful!' . "\n";
                     break;
                 }
             }
-            echo 'Operation was successful!' . "\n";
+
             return a::sort($dataOutput, 'AutorIn', 'asc');
         } catch (\Exception $e) {
             echo 'Error: ' . $e->getMessage();

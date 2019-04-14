@@ -14,39 +14,19 @@ use \Doctrine\Common\Cache\FilesystemCache;
 
 abstract class ProviderAbstract
 {
-    protected $dataInput;
-
-    public function __construct(array $dataInput, string $cachePath)
+    public function __construct(string $cachePath, array $sortOrder)
     {
-        // Array holding data to read from
-        $this->dataInput = $dataInput;
-
         // Defines path for cached data
         $this->cachePath = $cachePath;
 
         // Array holding desirable header sort order
-        $this->sortOrder = [
-            'AutorIn',
-            'Titel',
-            'Untertitel',
-            'Verlag',
-            'Mitwirkende',
-            'Preis',
-            'Erscheinungsjahr',
-            'ISBN',
-            'Altersempfehlung',
-            'Inhaltsbeschreibung',
-            'Informationen',
-            'Einband',
-            'Seitenzahl',
-            'Abmessungen',
-            'Cover',
-            'Cover DNB',
-            'Cover KNV',
-        ];
+        $this->sortOrder = $sortOrder;
     }
 
-    // Forces every provider to implement the following functions:
+    /**
+     *  Forcing classes to include specific functions
+     */
+
     abstract public function getBook(string $isbn);
     abstract public function process(array $dataInput);
 

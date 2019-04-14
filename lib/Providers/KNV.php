@@ -17,14 +17,13 @@ use str;
 
 class KNV extends ProviderAbstract
 {
-
     /**
      * Returns raw book data from KNV
      *
-     * .. if it exists
+     * .. if book for given ISBN exists
      *
-     * @param Array $array
-     * @return String
+     * @param String $isbn
+     * @return Array
      */
     public function getBook($isbn)
     {
@@ -229,11 +228,16 @@ class KNV extends ProviderAbstract
     		return $array['MULTIMEDIA']['MMUrl'];
     }
 
-
+    /**
+     * Enriches an array with KNV information
+     *
+     * @param Array $dataInput - Input that should be processed
+     * @return Array
+     */
     public function process(array $dataInput = null)
     {
         if ($dataInput == null) {
-            $dataInput = $this->dataInput;
+            throw new \Exception('No data to process!');
         }
 
         $dataOutput = [];
