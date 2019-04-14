@@ -29,7 +29,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.6.0';
+    const VERSION = '0.7.0';
 
     public $imagePath = './dist/images';
     public $cachePath = './.cache';
