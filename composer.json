@@ -20,6 +20,7 @@
         "berteh/scribusgenerator": "dev-master",
         "doctrine/cache": "^1.8",
         "getkirby/toolkit": "^2.5",
+        "guzzlehttp/guzzle": "^6.3",
         "scriptotek/google-books": "^0.2.4"
     },
     "require-dev": {
