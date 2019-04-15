@@ -31,17 +31,22 @@ class KNV extends ProviderAbstract
         $login = json_decode($json, true);
 
         $client = new \SoapClient('http://ws.pcbis.de/knv-2.0/services/KNVWebService?wsdl', [
-            'soap_version' => SOAP_1_1,
+            'soap_version' => SOAP_1_2,
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
             'cache_wsdl' => WSDL_CACHE_BOTH,
             'trace' => true,
             'exceptions' => true,
         ]);
 
+        // For getting started with KNV's (surprisingly well documented) german API,
+        // see http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf
         $query = $client->WSCall([
+            // Login using credentials provided by `knv.login.json`
     				'LoginInfo' => $login,
+            // Starting a new database query
             'Suchen' => [
                 'Datenbank' => [
+                // Basically searching all databases they got
                     'KNV',
                     'KNVBG',
                     'BakerTaylor',
@@ -49,6 +54,8 @@ class KNV extends ProviderAbstract
                 ],
                 'Suche' => [
                     'SimpleTerm' => [
+                        // Simple search suffices as from exported CSV,
+                        // we already know they know .. you know?
                         'Suchfeld' => 'ISBN',
                         'Suchwert' => $isbn,
                         'Schwert2' => '',
@@ -56,21 +63,27 @@ class KNV extends ProviderAbstract
                     ],
                 ],
             ],
+            // Reading the results of the query above
             'Lesen' => [
+                // Returning the first result is alright, since given ISBN is unique
                 'SatzVon' => 1,
                 'SatzBis' => 1,
     						'Format' => 'KNVXMLLangText',
                 'AuswahlMultimediaDaten' => [
+                    // We only want the best cover they got - ZOOM mode ON!
                     'mmDatenLiefern' => true,
                     'mmVarianteFilter' => 'zoom',
                 ],
             ],
+            // .. and logging out, that's it!
             'Logout' => true
         ]);
 
+        // Getting raw XML response & preparing it to be loaded by SimpleXML
     		$result = $query->Daten->Datensaetze->Record->ArtikelDaten;
     		$result = str::replace($result, '&', '&amp;');
 
+        // XML to JSON to PHP array - we want its last entry
     		$xml = simplexml_load_string($result);
     		$json = json_encode($xml);
     		$array = (json_decode($json, true));
