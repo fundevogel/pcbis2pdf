@@ -29,7 +29,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.8.0';
+    const VERSION = '0.9.0';
 
     /**
      * Path to saved book cover images
@@ -57,7 +57,7 @@ class PCBIS2PDF
         'ISBN',
         'Einband',
         'Preis',
-        'Unknown', // Please help! :)
+        'Meldenummer',
         'SortRabatt',
         'Gewicht',
         'Informationen',

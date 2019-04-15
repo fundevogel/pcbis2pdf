@@ -11,7 +11,7 @@ use a;
 /**
  * Class Google
  *
- * Holds functions to collect & process GoogleBooks information
+ * Holds functions to collect & process Google Books information
  *
  * @package PCBIS2PDF\Providers
  */
@@ -19,7 +19,7 @@ use a;
 class Google extends ProviderAbstract
 {
     /**
-     * Returns raw book data from GoogleBooks API
+     * Returns raw book data from Google Books API
      *
      * .. if book for given ISBN exists
      *
@@ -43,7 +43,7 @@ class Google extends ProviderAbstract
 
 
     /**
-     * Enriches an array with GoogleBooks information
+     * Enriches an array with Google Books information
      *
      * @param Array $dataInput - Input that should be processed
      * @return Array
