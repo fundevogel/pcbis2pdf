@@ -57,9 +57,9 @@ class PCBIS2PDF
         'ISBN',
         'Einband',
         'Preis',
-        'a',
-        'b',
-        'c',
+        'Unknown', // Please help! :)
+        'SortRabatt',
+        'Gewicht',
         'Informationen',
         'Zusatz',
         'Kommentar'
