@@ -29,7 +29,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.7.0';
+    const VERSION = '0.8.0';
 
     /**
      * Path to saved book cover images
