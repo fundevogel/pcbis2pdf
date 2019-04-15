@@ -10,9 +10,9 @@ use str;
 /**
  * Class KNV
  *
- * Holds functions to convert KNV gibberish to useful defaults
+ * Holds functions to collect & process KNV gibberish to useful information
  *
- * @package BookRecommendations\Providers
+ * @package PCBIS2PDF\Providers
  */
 
 class KNV extends ProviderAbstract

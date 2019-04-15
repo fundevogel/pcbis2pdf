@@ -31,13 +31,24 @@ class PCBIS2PDF
      */
     const VERSION = '0.7.0';
 
+    /**
+     * Path to saved book cover images
+     *
+     * @var String
+     */
     public $imagePath = './dist/images';
+
+    /**
+     * CSV input file headers in order of use when exporting with pcbis.de
+     *
+     * @var String
+     */
     public $cachePath = './.cache';
 
     /**
      * CSV input file headers in order of use when exporting with pcbis.de
      *
-     * @var array
+     * @var Array
      */
     public $headers = [
         'AutorIn',
@@ -57,7 +68,7 @@ class PCBIS2PDF
     /**
      * Sort order for CSV output file headers
      *
-     * @var array
+     * @var Array
      */
     public $sortOrder = [
         'AutorIn',
@@ -150,7 +161,7 @@ class PCBIS2PDF
      * @param String $delimiter - Delimiting character
      * @return Array
      */
-    public function mergeCSV(array $input, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ';')
+    public function mergeCSV(array $input, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
     {
         $count = 0;
 
@@ -195,7 +206,7 @@ class PCBIS2PDF
      * @param String $delimiter - Delimiting character
      * @return Array
      */
-    public function CSV2PHP(string $input = './src/Titelexport.csv', string $delimiter = ';')
+    public function CSV2PHP(string $input = './src/Titelexport.csv', string $delimiter = ',')
     {
         if ($input == null) {
             $input = $this->input;
@@ -378,6 +389,7 @@ class PCBIS2PDF
             fwrite($handle, $raw);
             fclose($handle);
 
+            echo 'Downloading & saving "' . $isbn . '" as "' . $file . '" .. done!' . "\n";
             return true;
         }
         return false;
@@ -433,6 +445,7 @@ class PCBIS2PDF
             $coverDNB = $hasCover ? 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'] : '';
 
             $array = a::update($array, [
+                // Updating existing entries + adding blanks to prevent columns from shifting
                 'Einband' => $this->convertBinding($array['Einband']),
                 'Preis' => $this->convertPrice($array['Preis']),
                 'Titel' => $title,

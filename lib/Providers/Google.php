@@ -6,17 +6,17 @@ use PCBIS2PDF\ProviderAbstract;
 use Scriptotek\GoogleBooks\GoogleBooks;
 
 use a;
-use str;
+// use str;
 
 /**
- * Class KNV
+ * Class Google
  *
- * Holds functions to convert KNV gibberish to useful defaults
+ * Holds functions to collect & process GoogleBooks information
  *
- * @package BookRecommendations\Providers
+ * @package PCBIS2PDF\Providers
  */
 
-class KNV extends ProviderAbstract
+class Google extends ProviderAbstract
 {
     /**
      * Returns raw book data from GoogleBooks API
@@ -28,7 +28,7 @@ class KNV extends ProviderAbstract
      */
     public function getBook($isbn)
     {
-        $json = file_get_contents(basename('./knv.login.json'));
+        $json = file_get_contents(basename('./google.login.json'));
         $login = json_decode($json, true);
 
         $client = new GoogleBooks($login->key);

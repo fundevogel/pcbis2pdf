@@ -23,11 +23,24 @@ abstract class ProviderAbstract
         $this->sortOrder = $sortOrder;
     }
 
+
     /**
      *  Forcing classes to include specific functions
      */
 
+     /**
+      * Returns raw book data from provider's API
+      *
+      * @param String $isbn
+      */
     abstract public function getBook(string $isbn);
+
+
+    /**
+     * Enriches basic book data with information from provider's API
+     *
+     * @param Array $dataInput - Input that should be processed
+     */
     abstract public function process(array $dataInput);
 
 
@@ -35,6 +48,13 @@ abstract class ProviderAbstract
      *  Common functionality
      */
 
+    /**
+     * Fetches book information from cache if they exist, otherwise loads them & saves to cache
+     *
+     * @param String $isbn - A given book's ISBN
+     * @param String $identifier - Cache name to distinguish cache entries from one another
+     * @return Array
+     */
     protected function accessCache($isbn, $identifier)
     {
         $driver = new FilesystemCache($this->cachePath);
@@ -52,6 +72,12 @@ abstract class ProviderAbstract
     }
 
 
+    /**
+     * Sorts a given array holding book information by certain sort order
+     *
+     * @param Array $array - Input that should be sorted
+     * @return Array
+     */
     protected function sortArray($array)
     {
         $sortedArray = [];
