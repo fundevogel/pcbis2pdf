@@ -1,7 +1,7 @@
 # pcbis2pdf
 
 ## What
-This small library serves [our example workflow](https://github.com/Fundevogel/book-recommendations) for collecting information from [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values), exported from [pcbis.de](https://pcbis.de), and gathering some more through wholesale book distributor [KNV](http://knv.de)'s API (with built-in [GoogleBooks API](https://developers.google.com/books) support). For the documentation on their [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language) interface, see [here](http://www.knv.de/fileadmin/user_upload/IT/KNV-Webservice-2.pdf).
+This small library serves [our example workflow](https://github.com/Fundevogel/book-recommendations) for collecting information from [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values), exported from [pcbis.de](https://pcbis.de), and gathering some more through wholesale book distributor [KNV](http://knv.de)'s API (with built-in [GoogleBooks API](https://developers.google.com/books) support). For the documentation on their [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language) interface, see [here](http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf).
 
 
 ## Why
