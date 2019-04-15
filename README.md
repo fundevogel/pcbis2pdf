@@ -5,7 +5,7 @@ This small library serves [our example workflow](https://github.com/Fundevogel/b
 
 
 ## Why
-In the future, this script should automatize the generation of our [list of recommendations](https://fundevogel.de/en/recommendations) (~ 100 books), which gets published biannually. For now, it gathers information (caching them locally), downloads book covers (from the [German National Library](https://www.dnb.de/EN/Home/home_node.html)) and exports everything back to CSV. From there, you might want to pass you results to the [DTP](https://en.wikipedia.org/wiki/Desktop_publishing) software of your choice (eg, [Scribus](https://www.scribus.net), [QuarkXPress](http://www.quark.com/Products/QuarkXPress/), etc).
+In the future, this script should automatize the generation of our [list of recommendations](https://fundevogel.de/en/recommendations) (~ 100 books), which gets published biannually. For now, it gathers information (caching them locally), downloads book covers (from the [German National Library](https://www.dnb.de/EN/Home/home_node.html)) and exports everything back to CSV. From there, you might want to pass you results to the [DTP](https://en.wikipedia.org/wiki/Desktop_publishing) software of your choice (eg [InDesign](https://www.adobe.com/products/indesign.html), [Scribus](https://www.scribus.net), [QuarkXPress](http://www.quark.com/Products/QuarkXPress/) and others).
 
 
 ## How
