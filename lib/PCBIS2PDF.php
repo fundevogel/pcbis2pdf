@@ -509,7 +509,7 @@ class PCBIS2PDF
             $downloaded = $this->downloadCover($array['ISBN'], $slug);
             $imageName = $slug . '.jpg';
 
-            if ($downloaded && file_exists($imagePath = realpath($imageName)) {
+            if ($downloaded && file_exists($imagePath = realpath($imageName))) {
                 // Although InDesign seems to support relative paths for images,
                 // we don't want to go through specifics by providing their absolute path
                 $cover = $this->mode == 'indesign' ? $imagePath : $imageName;
