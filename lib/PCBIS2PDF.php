@@ -88,12 +88,12 @@ class PCBIS2PDF
         'Einband',
         'Seitenzahl',
         'Abmessungen',
-        'Cover',
+        '@Cover',
         'Cover DNB',
         'Cover KNV',
     ];
 
-    public function __construct(string $imagePath = null, array $headers = null, string $lang = 'de')
+    public function __construct(string $imagePath = null, array $headers = null, string $mode = 'normal', string $lang = 'de')
     {
         if ($imagePath !== null) {
             $this->setImagePath($imagePath);
@@ -102,6 +102,8 @@ class PCBIS2PDF
         if ($headers !== null) {
             $this->setHeaders($headers);
         }
+
+        $this->mode = $mode;
 
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
     }
@@ -496,8 +498,16 @@ class PCBIS2PDF
             $title = $this->convertTitle($array['Titel']);
             $slug = str::slug($title);
 
-            $hasCover = $this->downloadCover($array['ISBN'], $slug);
-            $cover = $hasCover ? $slug . '.jpg' : '';
+            $cover = '';
+            $downloaded = $this->downloadCover($array['ISBN'], $slug);
+            $imageName = $slug . '.jpg';
+
+            if ($downloaded && file_exists($imagePath = realpath($imageName)) {
+                // Although InDesign seems to support relative paths for images,
+                // we don't want to go through specifics by providing their absolute path
+                $cover = $this->mode == 'indesign' ? $imagePath : $imageName;
+            }
+
             $coverDNB = $hasCover ? 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'] : '';
 
             $array = a::update($array, [
@@ -513,7 +523,7 @@ class PCBIS2PDF
                 'Mitwirkende' => '',
                 'Informationen' => $info,
                 'Inhaltsbeschreibung' => '',
-                'Cover' => $cover,
+                '@Cover' => $cover,
                 'Cover DNB' => $coverDNB,
                 'Cover KNV' => '',
             ]);
