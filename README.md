@@ -1,7 +1,9 @@
 # pcbis2pdf
 
 ## What
-This small library serves [our example workflow](https://github.com/Fundevogel/book-recommendations) for collecting information from [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values), exported from [pcbis.de](https://pcbis.de), and gathering some more through wholesale book distributor [KNV](http://knv.de)'s API (with built-in [Google Books API](https://developers.google.com/books) & [OpenLibrary Books API](https://openlibrary.org/dev/docs/api/books) support). For the documentation on their [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language) interface, see [here](http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf).
+This small library powers [our example workflow](https://github.com/Fundevogel/book-recommendations) for collecting information from [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values), exported from [pcbis.de](https://pcbis.de), and gathering some more through wholesale book distributor [KNV](http://knv.de)'s API (with built-in [Google Books API](https://developers.google.com/books) & [OpenLibrary Books API](https://openlibrary.org/dev/docs/api/books) support). For the documentation on their [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language) interface, see [here](http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf).
+
+Despite its name, `pcbis2pdf` probably won't ever make the step from collected data to print-ready PDF at one fell swoop (don't be fooled), but rather aid as much as possible in the process (speaking asymptotically, if you will) - it's more of a `pcbis2dtp` right now, really.
 
 
 ## Why
@@ -9,7 +11,7 @@ In the future, this script should power the automatized generation of our [list 
 
 
 ## How
-This is a WIP, by definition constantly changing - a living boilerplate, if you will - feel free to adapt it to suit your needs. It's [available for Composer](https://packagist.org/packages/fundevogel/pcbis2pdf). Without passing any options, `pcbis2pdf` assumes the following project structure:
+This is a "living", constantly changing boilerplate - feel free to adapt it to suit your needs. It's [available for Composer](https://packagist.org/packages/fundevogel/pcbis2pdf). Without passing any options, `pcbis2pdf` assumes the following project structure:
 
 ```text
 ├── ..
