@@ -241,14 +241,23 @@ class PCBIS2PDF
      * @param String $delimiter - Delimiting character
      * @return Stream
      */
-    public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $delimiter = ',')
+    public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $headerPrefix = null, string $delimiter = ',')
     {
         $header = null;
 
         if (($handle = fopen($output, 'w')) !== false) {
             foreach ($dataInput as $row) {
+                $headerArray = array_keys($row);
+
+                // Optionally prefix all headers
+                if ($headerPrefix !== null) {
+                    foreach ($headerArray as $key => $value) {
+                        $headerArray[$key] = $headerPrefix . $value;
+                    }
+                }
+
                 if (!$header) {
-                    fputcsv($handle, array_keys($row), $delimiter);
+                    fputcsv($handle, $headerArray, $delimiter);
                     $header = true;
                 }
                 fputcsv($handle, $row, $delimiter);
