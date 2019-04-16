@@ -14,7 +14,7 @@ use \Doctrine\Common\Cache\FilesystemCache;
 
 abstract class ProviderAbstract
 {
-    public function __construct(array $sortOrder, string $cachePath = './.cache')
+    public function __construct(string $cachePath = './.cache', array $sortOrder)
     {
         // Defines path for cached data
         $this->cachePath = $cachePath;

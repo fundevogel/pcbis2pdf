@@ -450,18 +450,18 @@ class PCBIS2PDF
      * @param String $cachePath - Path for local cache results
      * @return Array
      */
-    public function process(array $dataInput = null, array $sortOrder = null, string $cachePath = null, bool $includeProviders = false)
+    public function process(array $dataInput = null, string $cachePath = null, array $sortOrder = null, bool $includeProviders = false)
     {
         if ($dataInput == null) {
             $dataInput = $this->CSV2PHP();
         }
 
-        if ($sortOrder !== null) {
-            $this->setSortOrder($sortOrder);
-        }
-
         if ($cachePath !== null) {
             $this->setCachePath($cachePath);
+        }
+
+        if ($sortOrder !== null) {
+            $this->setSortOrder($sortOrder);
         }
 
         $dataOutput = [];
@@ -514,8 +514,8 @@ class PCBIS2PDF
 
         try {
             $KNV = new KNV(
-              $this->sortOrder,
-              $this->cachePath
+              $this->cachePath,
+              $this->sortOrder
             );
 
             $dataOutput = $KNV->process($data);
