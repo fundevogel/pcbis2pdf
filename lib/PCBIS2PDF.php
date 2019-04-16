@@ -161,8 +161,12 @@ class PCBIS2PDF
      * @param String $delimiter - Delimiting character
      * @return Array
      */
-    public function mergeCSV(array $input, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
+    public function mergeCSV(array $input = [], string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
     {
+        if (empty($input)) {
+            $input = glob('./src/csv/*.csv');
+        }
+
         $count = 0;
 
         foreach ($input as $file) {
