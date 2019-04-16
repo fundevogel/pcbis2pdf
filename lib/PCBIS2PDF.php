@@ -25,11 +25,11 @@ use PCBIS2PDF\Providers\KNV;
 
 class PCBIS2PDF
 {
-
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.9.0';
+    const VERSION = '0.9.1';
+
 
     /**
      * Path to saved book cover images
@@ -38,12 +38,14 @@ class PCBIS2PDF
      */
     public $imagePath = './dist/images';
 
+
     /**
      * CSV input file headers in order of use when exporting with pcbis.de
      *
      * @var String
      */
     public $cachePath = './.cache';
+
 
     /**
      * CSV input file headers in order of use when exporting with pcbis.de
@@ -64,6 +66,7 @@ class PCBIS2PDF
         'Zusatz',
         'Kommentar'
     ];
+
 
     /**
      * Sort order for CSV output file headers
@@ -90,7 +93,7 @@ class PCBIS2PDF
         'Cover KNV',
     ];
 
-    public function __construct(string $imagePath = null, array $headers = null, array $sortOrder = null, string $lang = 'de')
+    public function __construct(string $imagePath = null, array $headers = null, string $lang = 'de')
     {
         if ($imagePath !== null) {
             $this->setImagePath($imagePath);
@@ -100,10 +103,6 @@ class PCBIS2PDF
             $this->setHeaders($headers);
         }
 
-        if ($sortOrder !== null) {
-            $this->setHeaders($sortOrder);
-        }
-
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
     }
 
@@ -111,6 +110,7 @@ class PCBIS2PDF
     /**
      * Setters & getters
      */
+
     public function setImagePath(string $imagePath)
     {
         $this->imagePath = $imagePath;
@@ -255,6 +255,13 @@ class PCBIS2PDF
     }
 
 
+    /**
+     * Processes array containing general information,
+     * applying functions to convert wanted data
+     *
+     * @param Array $array - Source PHP array to read data from
+     * @return Array
+     */
     private function generateInfo($array)
     {
     		$age = 'Keine Altersangabe';
@@ -264,28 +271,24 @@ class PCBIS2PDF
     		foreach ($array as $entry) {
     				// Remove garbled book dimensions
     				if (str::contains($entry, ' cm') || str::contains($entry, ' mm')) {
-    						// unset($array[$index]);
     						unset($array[array_search($entry, $array)]);
     				}
 
     				// Filtering age
     				if (str::contains($entry, ' J.') || str::contains($entry, ' Mon.')) {
     						$age = $this->convertAge($entry);
-    						// unset($array[$index]);
     						unset($array[array_search($entry, $array)]);
     				}
 
     				// Filtering page count
     				if (str::contains($entry, ' S.')) {
     						$pageCount = $this->convertPageCount($entry);
-    						// unset($array[$index]);
     						unset($array[array_search($entry, $array)]);
     				}
 
     				// Filtering year (almost always right at this point)
     				if (str::length($entry) == 4) {
     						$year = $entry;
-    						// unset($array[$index]);
     						unset($array[array_search($entry, $array)]);
     				}
     		}
@@ -310,6 +313,13 @@ class PCBIS2PDF
     		];
     }
 
+
+    /**
+     * Builds 'Titel' attribute as exported with pcbis.de
+     *
+     * @param String $string - Title string
+     * @return String
+     */
     private function convertTitle($string)
     {
     		// Input: Book title.
@@ -318,6 +328,12 @@ class PCBIS2PDF
     }
 
 
+    /**
+     * Builds 'Altersangabe' attribute as exported with pcbis.de
+     *
+     * @param String $string - Altersangabe string
+     * @return String
+     */
     private function convertAge($string)
     {
       	$string = str::replace($string, 'J.', 'Jahren');
@@ -329,12 +345,24 @@ class PCBIS2PDF
     }
 
 
+    /**
+     * Builds 'Seitenzahl' attribute as exported with pcbis.de
+     *
+     * @param String $string - Seitenzahl string
+     * @return String
+     */
     private function convertPageCount($string)
     {
     		return (int) $string;
     }
 
 
+    /**
+     * Builds 'Einband' attribute as exported with pcbis.de
+     *
+     * @param String $string - Einband string
+     * @return String
+     */
     private function convertBinding($string)
     {
     		$translations = $this->translations['binding'];
@@ -344,6 +372,12 @@ class PCBIS2PDF
     }
 
 
+    /**
+     * Builds 'Preis' attribute as exported with pcbis.de
+     *
+     * @param String $string - Preis string
+     * @return String
+     */
     private function convertPrice($string)
     {
     		// Input: XX.YY EUR
@@ -355,6 +389,15 @@ class PCBIS2PDF
     }
 
 
+    /**
+     * Downloads book cover from DNB
+     *
+     * .. if book cover for given ISBN doesn't exist already
+     *
+     * @param String $isbn - International Standard Book Number
+     * @param String $fileName - Filename for the image to be downloaded
+     * @return Boolean
+     */
     public function downloadCover(string $isbn, string $fileName = null)
     {
         if ($fileName == null) {
@@ -403,18 +446,18 @@ class PCBIS2PDF
      * @param String $cachePath - Path for local cache results
      * @return Array
      */
-    public function process(array $dataInput = null, string $cachePath = null, array $sortOrder = null, bool $includeProviders = false)
+    public function process(array $dataInput = null, array $sortOrder = null, string $cachePath = null, bool $includeProviders = false)
     {
         if ($dataInput == null) {
             $dataInput = $this->CSV2PHP();
         }
 
-        if ($cachePath !== null) {
-            $this->setCachePath($cachePath);
-        }
-
         if ($sortOrder !== null) {
             $this->setSortOrder($sortOrder);
+        }
+
+        if ($cachePath !== null) {
+            $this->setCachePath($cachePath);
         }
 
         $dataOutput = [];
@@ -467,8 +510,8 @@ class PCBIS2PDF
 
         try {
             $KNV = new KNV(
+              $this->sortOrder,
               $this->cachePath
-              $this->sortOrder
             );
 
             $dataOutput = $KNV->process($data);
@@ -483,6 +526,7 @@ class PCBIS2PDF
         echo 'Operation was successful!' . "\n";
         return a::sort($dataOutput, 'AutorIn', 'asc');
     }
+
 
     /**
      * Enriches an array with specific provider information

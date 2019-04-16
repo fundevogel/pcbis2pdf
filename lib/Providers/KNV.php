@@ -93,11 +93,11 @@ class KNV extends ProviderAbstract
 
 
     /**
-     * Returns subtitle from KNV
+     * Processes array (fetched from KNV's API) & builds 'AutorIn' attribute
      *
      * .. if it exists
      *
-     * @param Array $array
+     * @param Array $array - Source PHP array to read data from
      * @return String
      */
     private function getAuthor($array, $arrayCSV = ['Titel' => ''])
@@ -115,11 +115,11 @@ class KNV extends ProviderAbstract
 
 
     /**
-     * Returns subtitle from KNV
+     * Processes array (fetched from KNV's API) & builds 'Untertitel' attribute
      *
      * .. if it exists
      *
-     * @param Array $array
+     * @param Array $array - Source PHP array to read data from
      * @return String
      */
     private function getSubtitle($array)
@@ -136,6 +136,14 @@ class KNV extends ProviderAbstract
     }
 
 
+    /**
+     * Processes array (fetched from KNV's API) & builds 'Erscheinungsjahr' attribute
+     *
+     * .. if it exists
+     *
+     * @param Array $array - Source PHP array to read data from
+     * @return String
+     */
     private function getYear($array)
     {
         if (a::missing($array, ['Erschjahr'])) {
@@ -147,11 +155,11 @@ class KNV extends ProviderAbstract
 
 
     /**
-     * Returns descriptive text from KNV
+     * Processes array (fetched from KNV's API) & builds 'Inhaltsbeschreibung' attribute
      *
      * .. if it exists
      *
-     * @param Array $array
+     * @param Array $array - Source PHP array to read data from
      * @return String
      */
     private function getText($array)
@@ -177,11 +185,11 @@ class KNV extends ProviderAbstract
 
 
     /**
-     * Returns participant(s) from KNV
+     * Processes array (fetched from KNV's API) & builds 'Mitwirkende' attribute
      *
-     * .. if it/they exist(s)
+     * .. if it exists
      *
-     * @param Array $array
+     * @param Array $array - Source PHP array to read data from
      * @return String
      */
     private function getParticipants($array)
@@ -195,11 +203,9 @@ class KNV extends ProviderAbstract
 
 
     /**
-     * Returns book dimensions from KNV
+     * Converts 'Abmessungen' attribute from millimeters to centimeters
      *
-     * .. if width & height exist
-     *
-     * @param Array $array
+     * @param String $string - Abmessungen string
      * @return String
      */
     private function convertMM($string)
@@ -211,6 +217,12 @@ class KNV extends ProviderAbstract
     }
 
 
+    /**
+     * Processes array & builds 'Abmessungen' attribute as fetched from KNV's API
+     *
+     * @param Array $array - Source PHP array to read data from
+     * @return String
+     */
     private function getDimensions($array)
     {
     		if (a::missing($array, ['Breite'])) {
@@ -240,6 +252,7 @@ class KNV extends ProviderAbstract
     {
     		return $array['MULTIMEDIA']['MMUrl'];
     }
+
 
     /**
      * Enriches an array with KNV information
