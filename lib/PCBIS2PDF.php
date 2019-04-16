@@ -402,7 +402,7 @@ class PCBIS2PDF
      * @param String $fileName - Filename for the image to be downloaded
      * @return Boolean
      */
-    public function downloadCover(string $isbn, string $fileName = null)
+    public function downloadCover(string $isbn, string $fileName = null, string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
     {
         if ($fileName == null) {
             $fileName = $isbn;
@@ -424,7 +424,7 @@ class PCBIS2PDF
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             $result = parse_url($url);
             curl_setopt($ch, CURLOPT_REFERER, $result['scheme'] . '://' . $result['host']);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0');
+            curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
             $raw = curl_exec($ch);
             curl_close($ch);
 
