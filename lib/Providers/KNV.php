@@ -22,11 +22,14 @@ class KNV extends ProviderAbstract
      *
      * .. if book for given ISBN exists
      *
-     * @param String $isbn
-     * @return Array
+     * @param string $isbn
+     * @return array
      */
     public function getBook($isbn)
     {
+        if ($this->validateISBN($isbn) !== true)
+            return false;
+
         $json = file_get_contents(basename('./knv.login.json'));
         $login = json_decode($json, true);
 
@@ -97,8 +100,8 @@ class KNV extends ProviderAbstract
      *
      * .. if it exists
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getAuthor($array, $arrayCSV = ['Titel' => ''])
     {
@@ -119,8 +122,8 @@ class KNV extends ProviderAbstract
      *
      * .. if it exists
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getSubtitle($array)
     {
@@ -141,8 +144,8 @@ class KNV extends ProviderAbstract
      *
      * .. if it exists
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getYear($array)
     {
@@ -159,8 +162,8 @@ class KNV extends ProviderAbstract
      *
      * .. if it exists
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getText($array)
     {
@@ -189,8 +192,8 @@ class KNV extends ProviderAbstract
      *
      * .. if it exists
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getParticipants($array)
     {
@@ -205,8 +208,8 @@ class KNV extends ProviderAbstract
     /**
      * Converts 'Abmessungen' attribute from millimeters to centimeters
      *
-     * @param String $string - Abmessungen string
-     * @return String
+     * @param string $string - Abmessungen string
+     * @return string
      */
     private function convertMM($string)
     {
@@ -220,8 +223,8 @@ class KNV extends ProviderAbstract
     /**
      * Processes array & builds 'Abmessungen' attribute as fetched from KNV's API
      *
-     * @param Array $array - Source PHP array to read data from
-     * @return String
+     * @param array $array - Source PHP array to read data from
+     * @return string
      */
     private function getDimensions($array)
     {
@@ -245,8 +248,8 @@ class KNV extends ProviderAbstract
      *
      * .. always!
      *
-     * @param Array $array
-     * @return String
+     * @param array $array
+     * @return string
      */
     private function getCover($array)
     {
@@ -257,8 +260,8 @@ class KNV extends ProviderAbstract
     /**
      * Enriches an array with KNV information
      *
-     * @param Array $dataInput - Input that should be processed
-     * @return Array
+     * @param array $dataInput - Input that should be processed
+     * @return array
      */
     public function process(array $dataInput = null)
     {
@@ -280,7 +283,7 @@ class KNV extends ProviderAbstract
         		        'Inhaltsbeschreibung' => $this->getText($book),
         		        'Cover KNV' => $this->getCover($book),
         		    ];
-        		} catch (Exception $e) {
+        		} catch (\Exception $e) {
         		    echo 'Error: ' . $e->getMessage();
         		}
 

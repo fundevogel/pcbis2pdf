@@ -23,11 +23,14 @@ class Google extends ProviderAbstract
      *
      * .. if book for given ISBN exists
      *
-     * @param String $isbn
-     * @return Array|Boolean
+     * @param string $isbn
+     * @return array|boolean
      */
     public function getBook($isbn)
     {
+        if ($this->validateISBN($isbn) !== true)
+            return false;
+
         $json = file_get_contents(basename('./google.login.json'));
         $login = json_decode($json, true);
 
@@ -45,8 +48,8 @@ class Google extends ProviderAbstract
     /**
      * Enriches an array with Google Books information
      *
-     * @param Array $dataInput - Input that should be processed
-     * @return Array
+     * @param array $dataInput - Input that should be processed
+     * @return array
      */
     public function process(array $dataInput = null)
     {

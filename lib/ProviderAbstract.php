@@ -2,7 +2,8 @@
 
 namespace PCBIS2PDF;
 
-use \Doctrine\Common\Cache\FilesystemCache;
+use Doctrine\Common\Cache\FilesystemCache;
+use Biblys\Isbn\Isbn;
 
 /**
  * Class ProviderAbstract
@@ -14,13 +15,15 @@ use \Doctrine\Common\Cache\FilesystemCache;
 
 abstract class ProviderAbstract
 {
-    public function __construct(string $cachePath = './.cache', array $sortOrder)
+    public function __construct(string $cachePath = './.cache', array $sortOrder = null)
     {
         // Defines path for cached data
         $this->cachePath = $cachePath;
 
         // Array holding desirable header sort order
-        $this->sortOrder = $sortOrder;
+        if ($sortOrder !== null) {
+            $this->sortOrder = $sortOrder;
+        }
     }
 
 
@@ -31,7 +34,7 @@ abstract class ProviderAbstract
      /**
       * Returns raw book data from provider's API
       *
-      * @param String $isbn
+      * @param string $isbn
       */
     abstract public function getBook(string $isbn);
 
@@ -39,7 +42,7 @@ abstract class ProviderAbstract
     /**
      * Enriches basic book data with information from provider's API
      *
-     * @param Array $dataInput - Input that should be processed
+     * @param array $dataInput - Input that should be processed
      */
     abstract public function process(array $dataInput);
 
@@ -51,9 +54,9 @@ abstract class ProviderAbstract
     /**
      * Fetches book information from cache if they exist, otherwise loads them & saves to cache
      *
-     * @param String $isbn - A given book's ISBN
-     * @param String $identifier - Cache name to distinguish cache entries from one another
-     * @return Array
+     * @param string $isbn - A given book's ISBN
+     * @param string $identifier - Cache name to distinguish cache entries from one another
+     * @return array
      */
     protected function accessCache($isbn, $identifier)
     {
@@ -75,8 +78,8 @@ abstract class ProviderAbstract
     /**
      * Sorts a given array holding book information by certain sort order
      *
-     * @param Array $array - Input that should be sorted
-     * @return Array
+     * @param array $array - Input that should be sorted
+     * @return array
      */
     protected function sortArray($array)
     {
@@ -87,5 +90,18 @@ abstract class ProviderAbstract
         }
 
         return $sortedArray;
+    }
+
+    protected function validateISBN($isbn)
+    {
+        try {
+            $object = new PCBIS2PDF;
+            $object->validateISBN($isbn);
+        } catch (\InvalidArgumentException $e) {
+            echo 'Error: ' . $e->getMessage(), "\n";
+            return false;
+        }
+
+        return true;
     }
 }

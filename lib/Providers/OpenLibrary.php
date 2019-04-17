@@ -23,11 +23,14 @@ class OpenLibrary extends ProviderAbstract
      *
      * .. if book for given ISBN exists
      *
-     * @param String $isbn
-     * @return Array|Boolean
+     * @param string $isbn
+     * @return array|boolean
      */
     public function getBook($isbn)
     {
+        if ($this->validateISBN($isbn) !== true)
+            return false;
+
         $client = new Client();
 
         $query = $client->request('GET', 'https://openlibrary.org/api/books', [
@@ -54,8 +57,8 @@ class OpenLibrary extends ProviderAbstract
     /**
      * Enriches an array with OpenLibrary information
      *
-     * @param Array $dataInput - Input that should be processed
-     * @return Array
+     * @param array $dataInput - Input that should be processed
+     * @return array
      */
     public function process(array $dataInput = null)
     {
