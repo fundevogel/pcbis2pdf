@@ -3,6 +3,7 @@
 namespace PCBIS2PDF\Providers;
 
 use PCBIS2PDF\ProviderAbstract;
+use PCBIS2PDF\Helpers\Butler;
 use Scriptotek\GoogleBooks\GoogleBooks;
 
 use a;
@@ -26,15 +27,17 @@ class Google extends ProviderAbstract
      * @param string $isbn
      * @return array|boolean
      */
-    public function getBook($isbn)
+    public function getBook(string $isbn)
     {
-        if ($this->validateISBN($isbn) !== true)
-            return false;
+        try {
+            Butler::validateISBN($isbn);
+            $provider = str::lower(basename(__FILE__, '.php'));
+            $login = $this->getLogin($provider);
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
-        $json = file_get_contents(basename('./google.login.json'));
-        $login = json_decode($json, true);
-
-        $client = new GoogleBooks($login->key);
+        $client = new GoogleBooks($login['key']);
 
         if ($query = $client->volumes->byIsbn($isbn)) {
     				$array = (array) $query->volumeInfo;

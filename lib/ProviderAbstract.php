@@ -3,7 +3,6 @@
 namespace PCBIS2PDF;
 
 use Doctrine\Common\Cache\FilesystemCache;
-use Biblys\Isbn\Isbn;
 
 /**
  * Class ProviderAbstract
@@ -28,7 +27,7 @@ abstract class ProviderAbstract
 
 
     /**
-     *  Forcing classes to include specific functions
+     * Forcing classes to include specific functions
      */
 
      /**
@@ -48,25 +47,54 @@ abstract class ProviderAbstract
 
 
     /**
-     *  Common functionality
+     * Common functionality
      */
+
+    /**
+     * Checks if `*.login.json` file for given provider exists an returns
+     * array with login information if that's the case
+     *
+     * @param string $provider - Provider name, eg 'KNV', 'Google', etc
+     * @return array|Exception
+     */
+    protected function getLogin(string $provider)
+    {
+        if (file_exists($file = realpath('./' . $provider . '.login.json'))) {
+            $json = file_get_contents($file);
+            $array = json_decode($json, true);
+
+            return $array;
+        }
+
+        throw new \Exception('No "' . $provider . '.login.json" found.');
+    }
+
 
     /**
      * Fetches book information from cache if they exist, otherwise loads them & saves to cache
      *
      * @param string $isbn - A given book's ISBN
      * @param string $identifier - Cache name to distinguish cache entries from one another
-     * @return array
+     * @return array|boolean
      */
     protected function accessCache($isbn, $identifier)
     {
+        // `accessCache` is always loaded after ISBN validation, so there's no need at this point ..
         $driver = new FilesystemCache($this->cachePath);
         $id = implode('-', [$identifier, md5($isbn)]);
 
         if ($driver->contains($id)) {
             echo 'Loading "' . $isbn . '" from "' . $identifier . '" cache .. done!' . "\n";
         } else {
-            $result = $this->getBook($isbn);
+            // .. however, if something goes wrong with the API call,
+            // we don't want to save an empty response:
+            try {
+                $result = $this->getBook($isbn);
+            } catch (\Exception $e) {
+                echo 'Error: ' . $e->getMessage(), "\n";
+                return false;
+            }
+
             $driver->save($id, $result);
             echo 'Downloading & saving "' . $isbn . '" to "' . $identifier . '" cache .. done!' . "\n";
         }
@@ -90,18 +118,5 @@ abstract class ProviderAbstract
         }
 
         return $sortedArray;
-    }
-
-    protected function validateISBN($isbn)
-    {
-        try {
-            $object = new PCBIS2PDF;
-            $object->validateISBN($isbn);
-        } catch (\InvalidArgumentException $e) {
-            echo 'Error: ' . $e->getMessage(), "\n";
-            return false;
-        }
-
-        return true;
     }
 }

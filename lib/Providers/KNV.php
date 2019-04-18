@@ -3,6 +3,7 @@
 namespace PCBIS2PDF\Providers;
 
 use PCBIS2PDF\ProviderAbstract;
+use PCBIS2PDF\Helpers\Butler;
 
 use a;
 use str;
@@ -23,15 +24,17 @@ class KNV extends ProviderAbstract
      * .. if book for given ISBN exists
      *
      * @param string $isbn
-     * @return array
+     * @return array|Exception
      */
-    public function getBook($isbn)
+    public function getBook(string $isbn)
     {
-        if ($this->validateISBN($isbn) !== true)
-            return false;
-
-        $json = file_get_contents(basename('./knv.login.json'));
-        $login = json_decode($json, true);
+        try {
+            Butler::validateISBN($isbn);
+            $provider = str::lower(basename(__FILE__, '.php'));
+            $login = $this->getLogin($provider);
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
         $client = new \SoapClient('http://ws.pcbis.de/knv-2.0/services/KNVWebService?wsdl', [
             'soap_version' => SOAP_1_2,
@@ -272,8 +275,14 @@ class KNV extends ProviderAbstract
         $dataOutput = [];
 
         foreach ($dataInput as $array) {
+            try {
+                $book = $this->accessCache($array['ISBN'], 'KNV');
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+                continue;
+            }
+
         		try {
-        		    $book = $this->accessCache($array['ISBN'], 'KNV');
         		    $arrayKNV = [
         						'Erscheinungsjahr' => $this->getYear($book),
         		        'AutorIn' => $this->getAuthor($book, $array),

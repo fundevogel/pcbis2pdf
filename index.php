@@ -8,9 +8,14 @@ $object = new PCBIS2PDF\PCBIS2PDF;
 // $object->mergeCSV();
 
 // Do it like this ..
-$fromCSV = $object->CSV2PHP();
-$array = $object->process($fromCSV);
-$object->PHP2CSV($array);
+try {
+    $fromCSV = $object->CSV2PHP('./example/Titelexport.csv', ';');
+    $array = $object->process($fromCSV);
+    $object->PHP2CSV($array);
+} catch (\Exception $e) {
+    echo 'Error: ' . $e->getMessage(), "\n";
+}
+
 
 // .. or go crazy like this:
 // $object->PHP2CSV($object->process($object->CSV2PHP()));

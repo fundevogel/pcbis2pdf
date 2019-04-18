@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PCBIS2PDF - pcbis.de helper class
+ * PCBIS2PDF - pcbis.de helper library
  *
  * @link https://github.com/Fundevogel/pcbis2pdf
  * @license https://www.gnu.org/licenses/gpl-3.0.txt GPL v3
@@ -10,6 +10,7 @@
 namespace PCBIS2PDF;
 
 use PCBIS2PDF\Providers\KNV;
+use PCBIS2PDF\Helpers\Butler;
 
 use a;
 use str;
@@ -186,7 +187,7 @@ class PCBIS2PDF
             }
         }
 
-        if ($hasHeader == true) {
+        if ($hasHeader === true) {
             $headerArray = [];
 
             foreach ($array as $key => $value) {
@@ -413,27 +414,6 @@ class PCBIS2PDF
 
 
     /**
-     * Checks whether given ISBN consists of 10 or 13 digits
-     * For more advanced ways to detect valid ISBNs,
-     * see
-     *
-     * @param string $isbn - International Standard Book Number
-     * @return boolean|InvalidArgumentException
-     */
-    public function validateISBN($isbn)
-    {
-        $cleanISBN = str::replace($isbn, '-', '');
-        $length = str::length($cleanISBN);
-
-        if ($length === 10 || $length === 13) {
-            return true;
-        }
-
-        throw new \InvalidArgumentException('ISBN must consist of 10 or 13 digits, ' . $length . ' given (' . $isbn . ').');
-    }
-
-
-    /**
      * Downloads book cover from DNB
      *
      * .. if book cover for given ISBN doesn't exist already
@@ -445,7 +425,7 @@ class PCBIS2PDF
     public function downloadCover(string $isbn, string $fileName = null, string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
     {
         try {
-            $this->validateISBN($isbn);
+            Butler::validateISBN($isbn);
         } catch (\InvalidArgumentException $e) {
             echo 'Error: ', $e->getMessage(), "\n";
             return false;
@@ -517,7 +497,7 @@ class PCBIS2PDF
             // Continue the foreach loop with the next book upon invalid ISBN,
             // which only ever applies to self-generated CSV files (but whatever)
             try {
-                $this->validateISBN($array['ISBN']);
+                Butler::validateISBN($array['ISBN']);
             } catch (\InvalidArgumentException $e) {
                 echo 'Error: ', $e->getMessage(), "\n";
                 continue;
@@ -578,13 +558,13 @@ class PCBIS2PDF
 
         try {
             $KNV = new KNV(
-              $this->cachePath,
-              $this->sortOrder
+                $this->cachePath,
+                $this->sortOrder
             );
 
             $dataOutput = $KNV->process($data);
 
-            if ($includeProviders == true) {
+            if ($includeProviders === true) {
                 $dataOutput = includeProviders($dataOutput);
             }
         } catch (\Exception $e) {

@@ -3,6 +3,7 @@
 namespace PCBIS2PDF\Providers;
 
 use PCBIS2PDF\ProviderAbstract;
+use PCBIS2PDF\Helpers\Butler;
 use GuzzleHttp\Client;
 
 use a;
@@ -26,10 +27,13 @@ class OpenLibrary extends ProviderAbstract
      * @param string $isbn
      * @return array|boolean
      */
-    public function getBook($isbn)
+    public function getBook(string $isbn)
     {
-        if ($this->validateISBN($isbn) !== true)
-            return false;
+        try {
+            Butler::validateISBN($isbn);
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
         $client = new Client();
 
