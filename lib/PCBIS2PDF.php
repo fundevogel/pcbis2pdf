@@ -30,7 +30,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.9.4';
+    const VERSION = '0.9.5';
 
 
     /**
