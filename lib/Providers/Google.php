@@ -72,7 +72,7 @@ class Google extends ProviderAbstract
         		        // 'Cover Google' => '',
         		    ];
         		} catch (Exception $e) {
-        		    echo 'Error: ' . $e->getMessage();
+                echo 'Error: ' . $e->getMessage(), "\n";
         		}
 
         		$array = a::update($array, array_filter($arrayGoogle, 'strlen'));

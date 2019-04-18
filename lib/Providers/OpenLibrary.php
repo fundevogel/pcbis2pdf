@@ -81,7 +81,7 @@ class OpenLibrary extends ProviderAbstract
         		        // 'Cover OpenLibrary' => '',
         		    ];
         		} catch (Exception $e) {
-        		    echo 'Error: ' . $e->getMessage();
+                echo 'Error: ' . $e->getMessage(), "\n";
         		}
 
         		$array = a::update($array, array_filter($arrayOpenLibrary, 'strlen'));

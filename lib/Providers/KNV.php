@@ -269,7 +269,7 @@ class KNV extends ProviderAbstract
     public function process(array $dataInput = null)
     {
         if ($dataInput == null) {
-            throw new \Exception('No data to process!');
+            throw new \InvalidArgumentException('No data to process!');
         }
 
         $dataOutput = [];
@@ -278,7 +278,7 @@ class KNV extends ProviderAbstract
             try {
                 $book = $this->accessCache($array['ISBN'], 'KNV');
             } catch (\Exception $e) {
-                echo $e->getMessage();
+                echo 'Error: ' . $e->getMessage(), "\n";
                 continue;
             }
 
@@ -293,12 +293,12 @@ class KNV extends ProviderAbstract
         		        'Cover KNV' => $this->getCover($book),
         		    ];
         		} catch (\Exception $e) {
-        		    echo 'Error: ' . $e->getMessage();
+        		    echo 'Error: ' . $e->getMessage(), "\n";
         		}
 
         		$array = a::update($array, array_filter($arrayKNV, 'strlen'));
 
-            $dataOutput[] = $this->sortArray($array);
+            $dataOutput[] = $array;
         }
 
         return $dataOutput;

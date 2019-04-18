@@ -5,9 +5,9 @@ namespace PCBIS2PDF\Helpers;
 use str;
 
 /**
- * Class Do
+ * Class Butler
  *
- * This class contains useful helper functions
+ * This class contains useful helper functions, pretty much like a butler
  *
  * @package PCBIS2PDF
  */
@@ -20,9 +20,9 @@ class Butler
      * see https://github.com/biblys/isbn
      *
      * @param string $isbn - International Standard Book Number
-     * @return boolean|Exception
+     * @return boolean|InvalidArgumentException
      */
-    public static function validateISBN($isbn)
+    public static function validateISBN(string $isbn)
     {
         $cleanISBN = str::replace($isbn, '-', '');
         $length = str::length($cleanISBN);

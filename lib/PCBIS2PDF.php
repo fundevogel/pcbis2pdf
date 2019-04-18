@@ -30,15 +30,23 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '0.9.5';
+    const VERSION = '1.0.0-beta.1';
 
 
     /**
-     * Path to saved book cover images
+     * Path to downloaded book cover images
      *
      * @var string
      */
-    public $imagePath = './dist/images';
+    private $imagePath = './dist/images';
+
+
+    /**
+     * User-Agent used when downloading book cover images
+     *
+     * @var string
+     */
+    private $userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0';
 
 
     /**
@@ -46,7 +54,7 @@ class PCBIS2PDF
      *
      * @var string
      */
-    public $cachePath = './.cache';
+    private $cachePath = './.cache';
 
 
     /**
@@ -54,7 +62,7 @@ class PCBIS2PDF
      *
      * @var array
      */
-    public $headers = [
+    private $headers = [
         'AutorIn',
         'Titel',
         'Verlag',
@@ -71,11 +79,27 @@ class PCBIS2PDF
 
 
     /**
+     * Prefix to be added to each CSV output file header
+     *
+     * @var null
+     */
+    private $headerPrefix = null;
+
+
+    /**
+     * Suffix to be added to each CSV output file header
+     *
+     * @var null
+     */
+    private $headerSuffix = null;
+
+
+    /**
      * Sort order for CSV output file headers
      *
      * @var array
      */
-    public $sortOrder = [
+    private $sortOrder = [
         'AutorIn',
         'Titel',
         'Untertitel',
@@ -95,18 +119,14 @@ class PCBIS2PDF
         'Cover KNV',
     ];
 
-    public function __construct(string $imagePath = null, array $headers = null, string $mode = 'normal', string $lang = 'de')
+
+    public function __construct(string $mode = 'normal', string $lang = 'de')
     {
-        if ($imagePath !== null) {
-            $this->setImagePath($imagePath);
-        }
-
-        if ($headers !== null) {
-            $this->setHeaders($headers);
-        }
-
+        // Work mode - available options include 'normal' (default) & 'indesign'
         $this->mode = $mode;
 
+        // Feel free to open a pull request to include additional language variables
+        // TODO: Extending language variables by local files or other means (eg passing an array)
         $this->translations = json_decode(file_get_contents(__DIR__ . '/../languages/' . $lang . '.json'), true);
     }
 
@@ -123,6 +143,16 @@ class PCBIS2PDF
     public function getImagePath()
     {
         return $this->imagePath;
+    }
+
+    public function setUserAgent(string $userAgent)
+    {
+        $this->userAgent = $userAgent;
+    }
+
+    public function getUserAgent()
+    {
+        return $this->userAgent;
     }
 
     public function setCachePath(string $cachePath)
@@ -145,6 +175,26 @@ class PCBIS2PDF
         return $this->headers;
     }
 
+    public function setHeaderPrefix(string $headerPrefix)
+    {
+        $this->headerPrefix = $headerPrefix;
+    }
+
+    public function getHeaderPrefix()
+    {
+        return $this->headerPrefix;
+    }
+
+    public function setHeaderSuffix(string $headerSuffix)
+    {
+        $this->headerSuffix = $headerSuffix;
+    }
+
+    public function getHeaderSuffix()
+    {
+        return $this->headerSuffix;
+    }
+
     public function setSortOrder(array $sortOrder)
     {
         $this->sortOrder = $sortOrder;
@@ -163,11 +213,11 @@ class PCBIS2PDF
      * @param string $output - Destination CSV file to write data to
      * @param boolean $hasHeader - Specifies whether or not a header row is present in source CSV files
      * @param string $delimiter - Delimiting character
-     * @return array
+     * @return Stream
      */
-    public function mergeCSV(array $input = [], string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
+    public function mergeCSV(array $input = null, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
     {
-        if (empty($input)) {
+        if ($input === null) {
             $input = glob('./src/csv/*.csv');
         }
 
@@ -216,10 +266,6 @@ class PCBIS2PDF
      */
     public function CSV2PHP(string $input = './src/Titelexport.csv', string $delimiter = ',')
     {
-        if ($input == null) {
-            $input = $this->input;
-        }
-
         if (!file_exists($input) || !is_readable($input)) {
             return false;
         }
@@ -243,10 +289,14 @@ class PCBIS2PDF
      * @param array $data - Source PHP array to read data from
      * @param string $output - Destination CSV file to write data to
      * @param string $delimiter - Delimiting character
-     * @return stream
+     * @return Stream
      */
-    public function PHP2CSV(array $dataInput, string $output = './dist/data.csv', string $headerPrefix = null, string $headerSuffix = null, string $delimiter = ',')
+    public function PHP2CSV(array $dataInput = null, string $output = './dist/data.csv', string $delimiter = ',')
     {
+        if ($dataInput === null) {
+            throw new \InvalidArgumentException('No data given to process.');
+        }
+
         $header = null;
 
         if (($handle = fopen($output, 'w')) !== false) {
@@ -254,16 +304,16 @@ class PCBIS2PDF
                 $headerArray = array_keys($row);
 
                 // Optionally prefix all headers
-                if ($headerPrefix !== null) {
+                if ($this->headerPrefix !== null) {
                     foreach ($headerArray as $key => $value) {
-                        $headerArray[$key] = $headerPrefix . $value;
+                        $headerArray[$key] = $this->headerPrefix . $value;
                     }
                 }
 
                 // Optionally suffix all headers
-                if ($headerSuffix !== null) {
+                if ($this->headerSuffix !== null) {
                     foreach ($headerArray as $key => $value) {
-                        $headerArray[$key] = $value . $headerSuffix;
+                        $headerArray[$key] = $value . $this->headerSuffix;
                     }
                 }
 
@@ -286,7 +336,7 @@ class PCBIS2PDF
      * @param array $array - Source PHP array to read data from
      * @return array
      */
-    private function generateInfo($array)
+    private function generateInfo(array $array)
     {
     		$age = 'Keine Altersangabe';
     		$pageCount = '';
@@ -422,7 +472,7 @@ class PCBIS2PDF
      * @param string $fileName - Filename for the image to be downloaded
      * @return boolean
      */
-    public function downloadCover(string $isbn, string $fileName = null, string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0')
+    public function downloadCover(string $isbn, string $fileName = null)
     {
         try {
             Butler::validateISBN($isbn);
@@ -438,7 +488,7 @@ class PCBIS2PDF
         $file = $this->imagePath . '/' . $fileName . '.jpg';
 
         if (file_exists($file)) {
-            echo 'Book cover for ' . $isbn . ' already exists, skipping ..' . "\n";
+            echo 'Book cover for ' . $isbn . ' already exists, skipping ..', "\n";
             return true;
         }
 
@@ -451,7 +501,7 @@ class PCBIS2PDF
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             $result = parse_url($url);
             curl_setopt($ch, CURLOPT_REFERER, $result['scheme'] . '://' . $result['host']);
-            curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
+            curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
             $raw = curl_exec($ch);
             curl_close($ch);
 
@@ -463,7 +513,7 @@ class PCBIS2PDF
             fwrite($handle, $raw);
             fclose($handle);
 
-            echo 'Downloading & saving "' . $isbn . '" as "' . $file . '" .. done!' . "\n";
+            echo 'Downloading & saving "' . $isbn . '" as "' . $file . '" .. done!', "\n";
             return true;
         }
         return false;
@@ -471,24 +521,34 @@ class PCBIS2PDF
 
 
     /**
+     * Sorts a given array holding book information by certain sort order
+     *
+     * @param array $array - Input that should be sorted
+     * @return array
+     */
+    protected function sortArray($array)
+    {
+        $sortedArray = [];
+
+        foreach ($this->sortOrder as $entry) {
+            $sortedArray[$entry] = $array[$entry];
+        }
+
+        return $sortedArray;
+    }
+
+
+    /**
      * Enriches an array with KNV information
      *
      * @param array $dataInput - Input that should be processed
-     * @param string $cachePath - Path for local cache results
-     * @return array
+     * @param boolean $includeProviders - Whether to include third-party providers
+     * @return array|InvalidArgumentException
      */
-    public function process(array $dataInput = null, string $cachePath = null, array $sortOrder = null, bool $includeProviders = false)
+    public function process(array $dataInput = null, bool $includeProviders = false)
     {
-        if ($dataInput == null) {
-            $dataInput = $this->CSV2PHP();
-        }
-
-        if ($cachePath !== null) {
-            $this->setCachePath($cachePath);
-        }
-
-        if ($sortOrder !== null) {
-            $this->setSortOrder($sortOrder);
+        if ($dataInput === null) {
+            throw new \InvalidArgumentException('No data given to process.');
         }
 
         $dataOutput = [];
@@ -507,7 +567,7 @@ class PCBIS2PDF
             $infoString = $array['Informationen'];
             $infoArray = str::split($infoString, ';');
 
-            if (count($infoArray) == 1) {
+            if (count($infoArray) === 1) {
                 $infoArray = str::split($infoString, '.');
             }
 
@@ -524,6 +584,7 @@ class PCBIS2PDF
             $slug = str::slug($title);
 
             $cover = '';
+            $coverDNB = '';
             $download = $this->downloadCover($array['ISBN'], $slug);
             $imageName = $slug . '.jpg';
 
@@ -531,47 +592,43 @@ class PCBIS2PDF
                 // Although InDesign seems to support relative paths for images,
                 // we don't want to go through specifics by providing their absolute path
                 $cover = $this->mode == 'indesign' ? realpath($imagePath) : $imageName;
+                $coverDNB = 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'];
             }
-
-            $coverDNB = 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'];
 
             $array = a::update($array, [
                 // Updating existing entries + adding blanks to prevent columns from shifting
-                'Einband' => $this->convertBinding($array['Einband']),
-                'Preis' => $this->convertPrice($array['Preis']),
                 'Titel' => $title,
                 'Untertitel' => '',
-                'Altersempfehlung' => $age,
+                'Mitwirkende' => '',
+                'Preis' => $this->convertPrice($array['Preis']),
                 'Erscheinungsjahr' => $year,
+                'Altersempfehlung' => $age,
+                'Inhaltsbeschreibung' => '',
+                'Informationen' => $info,
+                'Einband' => $this->convertBinding($array['Einband']),
                 'Seitenzahl' => $pageCount,
                 'Abmessungen' => '',
-                'Mitwirkende' => '',
-                'Informationen' => $info,
-                'Inhaltsbeschreibung' => '',
                 '@Cover' => $cover,
                 'Cover DNB' => $coverDNB,
                 'Cover KNV' => '',
             ]);
 
-            $data[] = $array;
+            $data[] = $this->sortArray($array);
         }
 
-        try {
-            $KNV = new KNV(
-                $this->cachePath,
-                $this->sortOrder
-            );
+        $KNV = new KNV($this->cachePath);
 
+        try {
             $dataOutput = $KNV->process($data);
 
             if ($includeProviders === true) {
                 $dataOutput = includeProviders($dataOutput);
             }
         } catch (\Exception $e) {
-            echo 'Error: ' . $e->getMessage();
+            echo 'Error: ' . $e->getMessage(), "\n";
         }
 
-        echo 'Operation was successful!' . "\n";
+        echo 'Operation was successful!', "\n";
         return a::sort($dataOutput, 'AutorIn', 'asc');
     }
 
@@ -580,17 +637,12 @@ class PCBIS2PDF
      * Enriches an array with specific provider information
      *
      * @param array $dataInput - Input that should be processed
-     * @param string $cachePath - Path for local cache results
-     * @return array
+     * @return array|InvalidArgumentException
      */
-    private function includeProviders($dataInput = null, string $cachePath = null)
+    private function includeProviders(array $dataInput = null)
     {
-        if ($dataInput == null) {
-            throw new \Exception('No data given to process!');
-        }
-
-        if ($cachePath == null) {
-          throw new \Exception('No cache path specified!');
+        if ($dataInput === null) {
+            throw new \InvalidArgumentException('No data given to process.');
         }
 
         $providers = array_map(function ($filePath) {
@@ -601,32 +653,32 @@ class PCBIS2PDF
         // KNV is used by default, so we don't need to include it
         unset($providers[array_search('KNV', $providers)]);
 
-        try {
-            foreach ($providers as $provider) {
-                $providerName = ucfirst(strtolower($provider));
-                $className = 'PCBIS2PDF\\Providers\\' . $providerName;
+        foreach ($providers as $provider) {
+            $providerName = ucfirst(strtolower($provider));
+            $className = 'PCBIS2PDF\\Providers\\' . $providerName;
 
-                if (!class_exists($className)) {
-                    continue;
-                }
-
-                $classObject = new $className($this->cachePath);
-
-                if (!$classObject instanceof ProviderAbstract || !is_callable([$classObject, 'process'])) {
-                    continue;
-                }
-
-                $data = $classObject->process($dataInput);
-
-                if ($data) {
-                    echo 'Operation by ' . $providerName . ' was successful!' . "\n";
-                    break;
-                }
+            if (!class_exists($className)) {
+                continue;
             }
 
-            return a::sort($dataOutput, 'AutorIn', 'asc');
-        } catch (\Exception $e) {
-            echo 'Error: ' . $e->getMessage();
+            $classObject = new $className($this->cachePath);
+
+            if (!$classObject instanceof ProviderAbstract || !is_callable([$classObject, 'process'])) {
+                continue;
+            }
+
+            try {
+                $data = $classObject->process($dataInput);
+            } catch (\Exception $e) {
+                echo 'Error: ' . $e->getMessage(), "\n";
+            }
+
+            if ($data) {
+                echo 'Operation by ' . $providerName . ' was successful!', "\n";
+                break;
+            }
         }
+
+        return a::sort($dataOutput, 'AutorIn', 'asc');
     }
 }

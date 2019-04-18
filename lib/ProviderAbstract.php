@@ -14,15 +14,10 @@ use Doctrine\Common\Cache\FilesystemCache;
 
 abstract class ProviderAbstract
 {
-    public function __construct(string $cachePath = './.cache', array $sortOrder = null)
+    public function __construct(string $cachePath = './.cache')
     {
         // Defines path for cached data
         $this->cachePath = $cachePath;
-
-        // Array holding desirable header sort order
-        if ($sortOrder !== null) {
-            $this->sortOrder = $sortOrder;
-        }
     }
 
 
@@ -84,7 +79,7 @@ abstract class ProviderAbstract
         $id = implode('-', [$identifier, md5($isbn)]);
 
         if ($driver->contains($id)) {
-            echo 'Loading "' . $isbn . '" from "' . $identifier . '" cache .. done!' . "\n";
+            echo 'Loading "' . $isbn . '" from "' . $identifier . '" cache .. done!', "\n";
         } else {
             // .. however, if something goes wrong with the API call,
             // we don't want to save an empty response:
@@ -96,27 +91,9 @@ abstract class ProviderAbstract
             }
 
             $driver->save($id, $result);
-            echo 'Downloading & saving "' . $isbn . '" to "' . $identifier . '" cache .. done!' . "\n";
+            echo 'Downloading & saving "' . $isbn . '" to "' . $identifier . '" cache .. done!', "\n";
         }
 
         return $driver->fetch($id);
-    }
-
-
-    /**
-     * Sorts a given array holding book information by certain sort order
-     *
-     * @param array $array - Input that should be sorted
-     * @return array
-     */
-    protected function sortArray($array)
-    {
-        $sortedArray = [];
-
-        foreach ($this->sortOrder as $entry) {
-            $sortedArray[$entry] = $array[$entry];
-        }
-
-        return $sortedArray;
     }
 }
