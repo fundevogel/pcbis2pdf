@@ -39,33 +39,18 @@ This is a "living", constantly changing boilerplate - feel free to adapt it to s
 
 *Note: The `dist` directory gets filled up after running `index.php`, but for presentiveness, results are included above as well.*
 
+
+## Basic workflow
 Make sure to provide your API credentials (see example `*.login.json` files inside the `example` directory).
-Given this structure, you may automagically download book covers to `dist/images` and generate `dist/data.csv` with the following simple script:
+Given this structure, you may automagically download book covers to `dist/images` and generate `dist/data.csv` by running `php index.php` or [have a look](index.php) first.
 
-```php
-<?php
 
-// index.php
+## Advanced workflow
+Taking things one step further, you might want to inject the generated `dist/data.csv` and all downloaded images into a DTP template. In the following example (found inside the `example` directory) is using [Scribus](https://www.scribus.net), an open source desktop publishing software compatible with Windows, macOS & GNU/Linux.
 
-require_once('vendor/autoload.php');
 
-$object = new PCBIS2PDF\PCBIS2PDF;
-
-// Combines all CSV files from `src/csv/*.csv` to `src/Titelexport.csv`
-// $object->mergeCSV();
-
-// Do it like this ..
-$fromCSV = $object->CSV2PHP();
-$array = $object->process($fromCSV);
-$object->PHP2CSV($array);
-
-// .. or go crazy like this:
-// $object->PHP2CSV($object->process($object->CSV2PHP()));
-```
-
-Taking things one step further, inject the generated `dist/data.csv` and all downloaded images into a DTP template. In the following example (found inside the `example` directory) is using [Scribus](https://www.scribus.net), an open source desktop publishing software compatible with Windows, macOS & GNU/Linux.
-
-Working with this over some time, you may want to add the following commands to your `composer.json` to automatize things even further. However, you might as well execute them directly:
+## Going beyond
+Working with this library over some time, you may want to add the following commands to your `composer.json` to automatize things even further (while executing them directly is fine as well):
 
 ```json
 "scripts": {
@@ -74,9 +59,7 @@ Working with this over some time, you may want to add the following commands to 
 }
 ```
 
-Now, start the thing off with `composer start` - good luck!
-
-For the Scribus example workflow mentioned above, hit `composer print` and head over to `dist/result.sla`.
+**Happy coding!**
 
 
 :copyright: Fundevogel Kinder- und Jugendbuchhandlung
