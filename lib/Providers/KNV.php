@@ -266,7 +266,7 @@ class KNV extends ProviderAbstract
      * @param array $dataInput - Input that should be processed
      * @return array
      */
-    public function process(array $dataInput = null)
+    public function processData(array $dataInput = null)
     {
         if ($dataInput == null) {
             throw new \InvalidArgumentException('No data to process!');
@@ -284,12 +284,12 @@ class KNV extends ProviderAbstract
 
         		try {
         		    $arrayKNV = [
+                    'AutorIn' => $this->getAuthor($book, $array),
+                    'Untertitel' => $this->getSubtitle($book),
+                    'Mitwirkende' => $this->getParticipants($book),
         						'Erscheinungsjahr' => $this->getYear($book),
-        		        'AutorIn' => $this->getAuthor($book, $array),
-        		        'Untertitel' => $this->getSubtitle($book),
-        						'Abmessungen' => $this->getDimensions($book),
-        		        'Mitwirkende' => $this->getParticipants($book),
         		        'Inhaltsbeschreibung' => $this->getText($book),
+                    'Abmessungen' => $this->getDimensions($book),
         		        'Cover KNV' => $this->getCover($book),
         		    ];
         		} catch (\Exception $e) {

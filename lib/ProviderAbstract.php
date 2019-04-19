@@ -38,7 +38,7 @@ abstract class ProviderAbstract
      *
      * @param array $dataInput - Input that should be processed
      */
-    abstract public function process(array $dataInput);
+    abstract public function processData(array $dataInput);
 
 
     /**

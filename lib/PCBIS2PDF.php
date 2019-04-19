@@ -215,15 +215,15 @@ class PCBIS2PDF
      * @param string $delimiter - Delimiting character
      * @return Stream
      */
-    public function mergeCSV(array $input = null, string $output = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
+    public function mergeCSV(array $inputCSV = null, string $outputCSV = './src/Titelexport.csv', bool $hasHeader = false, $delimiter = ',')
     {
-        if ($input === null) {
-            $input = glob('./src/csv/*.csv');
+        if ($inputCSV === null) {
+            $inputCSV = glob('./src/csv/*.csv');
         }
 
         $count = 0;
 
-        foreach ($input as $file) {
+        foreach ($inputCSV as $file) {
             if (($handle = fopen($file, 'r')) !== false) {
                 while (($row = fgetcsv($handle, 0, ';')) !== false) {
                     $rowCount = count($row);
@@ -247,7 +247,7 @@ class PCBIS2PDF
             $array = array_values($headerArray);
         }
 
-        $handle = fopen($output, 'w');
+        $handle = fopen($outputCSV, 'w');
 
         foreach ($array as $fields) {
             fputcsv($handle, $fields, $delimiter);
@@ -526,7 +526,7 @@ class PCBIS2PDF
      * @param array $array - Input that should be sorted
      * @return array
      */
-    protected function sortArray($array)
+    private function sortArray(array $array)
     {
         $sortedArray = [];
 
@@ -545,7 +545,7 @@ class PCBIS2PDF
      * @param boolean $includeProviders - Whether to include third-party providers
      * @return array|InvalidArgumentException
      */
-    public function process(array $dataInput = null, bool $includeProviders = false)
+    public function processData(array $dataInput = null, bool $includeProviders = false)
     {
         if ($dataInput === null) {
             throw new \InvalidArgumentException('No data given to process.');
@@ -619,7 +619,7 @@ class PCBIS2PDF
         $KNV = new KNV($this->cachePath);
 
         try {
-            $dataOutput = $KNV->process($data);
+            $dataOutput = $KNV->processData($data);
 
             if ($includeProviders === true) {
                 $dataOutput = includeProviders($dataOutput);
@@ -668,7 +668,7 @@ class PCBIS2PDF
             }
 
             try {
-                $data = $classObject->process($dataInput);
+                $data = $classObject->processData($dataInput);
             } catch (\Exception $e) {
                 echo 'Error: ' . $e->getMessage(), "\n";
             }

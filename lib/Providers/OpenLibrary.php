@@ -64,10 +64,10 @@ class OpenLibrary extends ProviderAbstract
      * @param array $dataInput - Input that should be processed
      * @return array
      */
-    public function process(array $dataInput = null)
+    public function processData(array $dataInput = null)
     {
         if ($dataInput == null) {
-            throw new \Exception('No data to process!');
+            throw new \InvalidArgumentException('No data to process!');
         }
 
         $dataOutput = [];
@@ -86,7 +86,7 @@ class OpenLibrary extends ProviderAbstract
 
         		$array = a::update($array, array_filter($arrayOpenLibrary, 'strlen'));
 
-            $dataOutput[] = $this->sortArray($array);
+            $dataOutput[] = $array;
         }
 
         return $dataOutput;
