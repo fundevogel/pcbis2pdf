@@ -2,7 +2,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude([
-      'src',
+      'languages'
+      'example',
       'dist'
     ])
     ->in(__DIR__)
