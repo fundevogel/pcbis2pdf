@@ -7,7 +7,8 @@
     "license": "GPL-3.0",
     "scripts": {
         "cs-dry": "php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix"
+        "cs-fix": "php-cs-fixer fix",
+        "test": "phpunit"
     },
     "authors": [
         {
@@ -24,11 +25,17 @@
         "scriptotek/google-books": "^0.2.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "phpunit/phpunit": "^8.1"
     },
     "autoload": {
         "psr-4": {
             "PCBIS2PDF\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PCBIS2PDF\\Tests\\": "tests/"
         }
     }
 }

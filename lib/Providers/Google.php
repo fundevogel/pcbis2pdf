@@ -7,7 +7,7 @@ use PCBIS2PDF\Helpers\Butler;
 use Scriptotek\GoogleBooks\GoogleBooks;
 
 use a;
-// use str;
+use str;
 
 /**
  * Class Google
@@ -54,10 +54,10 @@ class Google extends ProviderAbstract
      * @param array $dataInput - Input that should be processed
      * @return array
      */
-    public function process(array $dataInput = null)
+    public function processData(array $dataInput = null)
     {
         if ($dataInput == null) {
-            throw new \Exception('No data to process!');
+            throw new \InvalidArgumentException('No data to process!');
         }
 
         $dataOutput = [];
@@ -77,7 +77,7 @@ class Google extends ProviderAbstract
 
         		$array = a::update($array, array_filter($arrayGoogle, 'strlen'));
 
-            $dataOutput[] = $this->sortArray($array);
+            $dataOutput[] = $array;
         }
 
         return $dataOutput;

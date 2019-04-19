@@ -1,3 +1,5 @@
 /composer.lock
 /*.cache
 /vendor
+/tests/Resources/*_actual.csv
+/tests/Resources/*_actual.jpg
