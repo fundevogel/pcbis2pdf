@@ -44,11 +44,11 @@ class Google extends ProviderAbstract
         $client = new GoogleBooks($apiKey);
 
         if ($query = $client->volumes->byIsbn($isbn)) {
-    				$array = (array) $query->volumeInfo;
-    				return $array;
-    		}
+            $array = (array) $query->volumeInfo;
+            return $array;
+        }
 
-    		return false;
+        return false;
     }
 
 
@@ -67,19 +67,19 @@ class Google extends ProviderAbstract
         $dataOutput = [];
 
         foreach ($dataInput as $array) {
-        		try {
-        		    $book = $this->accessCache($array['ISBN'], 'Google');
-        		    $arrayGoogle = [
-            				// 'AutorIn' => a::missing($book, ['authors']) ? '' : implode(' & ', $book['authors']),
-        						// 'Datum' => a::missing($book, ['publishedDate']) ? '' : date('d.m.Y', strtotime($book['publishedDate'])),
-        						// 'Seitenzahl' => a::missing($book, ['pageCount']) ? '' : $book['pageCount'],
-        		        // 'Cover Google' => '',
-        		    ];
-        		} catch (Exception $e) {
+            try {
+                $book = $this->accessCache($array['ISBN'], 'Google');
+                $arrayGoogle = [
+                    // 'AutorIn' => a::missing($book, ['authors']) ? '' : implode(' & ', $book['authors']),
+                    // 'Datum' => a::missing($book, ['publishedDate']) ? '' : date('d.m.Y', strtotime($book['publishedDate'])),
+                    // 'Seitenzahl' => a::missing($book, ['pageCount']) ? '' : $book['pageCount'],
+                    // 'Cover Google' => '',
+                ];
+            } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage(), "\n";
-        		}
+            }
 
-        		$array = a::update($array, array_filter($arrayGoogle, 'strlen'));
+            $array = a::update($array, array_filter($arrayGoogle, 'strlen'));
 
             $dataOutput[] = $array;
         }

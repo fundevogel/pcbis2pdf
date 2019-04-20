@@ -338,53 +338,53 @@ class PCBIS2PDF
      */
     private function generateInfo(array $array)
     {
-    		$age = 'Keine Altersangabe';
-    		$pageCount = '';
-    		$year = '';
+        $age = 'Keine Altersangabe';
+        $pageCount = '';
+        $year = '';
 
-    		foreach ($array as $entry) {
-    				// Remove garbled book dimensions
-    				if (str::contains($entry, ' cm') || str::contains($entry, ' mm')) {
-    						unset($array[array_search($entry, $array)]);
-    				}
+        foreach ($array as $entry) {
+            // Remove garbled book dimensions
+            if (str::contains($entry, ' cm') || str::contains($entry, ' mm')) {
+                unset($array[array_search($entry, $array)]);
+            }
 
-    				// Filtering age
-    				if (str::contains($entry, ' J.') || str::contains($entry, ' Mon.')) {
-    						$age = $this->convertAge($entry);
-    						unset($array[array_search($entry, $array)]);
-    				}
+            // Filtering age
+            if (str::contains($entry, ' J.') || str::contains($entry, ' Mon.')) {
+                $age = $this->convertAge($entry);
+                unset($array[array_search($entry, $array)]);
+            }
 
-    				// Filtering page count
-    				if (str::contains($entry, ' S.')) {
-    						$pageCount = $this->convertPageCount($entry);
-    						unset($array[array_search($entry, $array)]);
-    				}
+            // Filtering page count
+            if (str::contains($entry, ' S.')) {
+                $pageCount = $this->convertPageCount($entry);
+                unset($array[array_search($entry, $array)]);
+            }
 
-    				// Filtering year (almost always right at this point)
-    				if (str::length($entry) == 4) {
-    						$year = $entry;
-    						unset($array[array_search($entry, $array)]);
-    				}
-    		}
+            // Filtering year (almost always right at this point)
+            if (str::length($entry) == 4) {
+                $year = $entry;
+                unset($array[array_search($entry, $array)]);
+            }
+        }
 
-    		$strings = $this->translations['information'];
-    		$array = str::replace($array,
-      			array_keys($strings),
-      			array_values($strings)
-    		);
+        $strings = $this->translations['information'];
+        $array = str::replace($array,
+            array_keys($strings),
+            array_values($strings)
+        );
 
-    		$info = ucfirst(implode(', ', $array));
+        $info = ucfirst(implode(', ', $array));
 
-    		if (str::length($info) > 0) {
-      			$info = str::replace($info, '.', '') . '.';
-    		}
+        if (str::length($info) > 0) {
+            $info = str::replace($info, '.', '') . '.';
+        }
 
-    		return [
-      			$info,
-      			$year,
-      			$age,
-      			$pageCount,
-    		];
+        return [
+            $info,
+            $year,
+            $age,
+            $pageCount,
+        ];
     }
 
 
@@ -396,9 +396,9 @@ class PCBIS2PDF
      */
     private function convertTitle($string)
     {
-    		// Input: Book title.
-    		// Output: Book title
-    		return str::substr($string, 0, -1);
+        // Input: Book title.
+        // Output: Book title
+        return str::substr($string, 0, -1);
     }
 
 
@@ -427,7 +427,7 @@ class PCBIS2PDF
      */
     private function convertPageCount($string)
     {
-    		return (int) $string;
+        return (int) $string;
     }
 
 
@@ -439,10 +439,10 @@ class PCBIS2PDF
      */
     private function convertBinding($string)
     {
-    		$translations = $this->translations['binding'];
-    		$string = $translations[$string];
+        $translations = $this->translations['binding'];
+        $string = $translations[$string];
 
-    		return $string;
+        return $string;
     }
 
 
@@ -454,12 +454,12 @@ class PCBIS2PDF
      */
     private function convertPrice($string)
     {
-    		// Input: XX.YY EUR
-    		// Output: XX,YY €
-    		$string = str::replace($string, 'EUR', '€');
-    		$string = str::replace($string, '.', ',');
+        // Input: XX.YY EUR
+        // Output: XX,YY €
+        $string = str::replace($string, 'EUR', '€');
+        $string = str::replace($string, '.', ',');
 
-    		return $string;
+        return $string;
     }
 
 

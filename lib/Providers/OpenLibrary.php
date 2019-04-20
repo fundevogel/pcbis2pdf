@@ -52,9 +52,9 @@ class OpenLibrary extends ProviderAbstract
             if (!empty($array)) {
                 return a::first($array);
             }
-    		}
+        }
 
-    		return false;
+        return false;
     }
 
 
@@ -73,18 +73,18 @@ class OpenLibrary extends ProviderAbstract
         $dataOutput = [];
 
         foreach ($dataInput as $array) {
-        		try {
-        		    $book = $this->accessCache($array['ISBN'], 'OpenLibrary');
-        		    $arrayOpenLibrary = [
+            try {
+                $book = $this->accessCache($array['ISBN'], 'OpenLibrary');
+                $arrayOpenLibrary = [
                     // 'Datum' => a::missing($book, ['publish_date']) ? '' : $book['publish_date'],
                     // 'Seitenzahl' => a::missing($book, ['number_of_pages']) ? '' : $book['number_of_pages'],
-        		        // 'Cover OpenLibrary' => '',
-        		    ];
-        		} catch (Exception $e) {
+                    // 'Cover OpenLibrary' => '',
+                ];
+            } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage(), "\n";
-        		}
+            }
 
-        		$array = a::update($array, array_filter($arrayOpenLibrary, 'strlen'));
+            $array = a::update($array, array_filter($arrayOpenLibrary, 'strlen'));
 
             $dataOutput[] = $array;
         }

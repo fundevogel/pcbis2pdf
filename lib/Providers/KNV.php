@@ -51,7 +51,7 @@ class KNV extends ProviderAbstract
         // see http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf
         $query = $client->WSCall([
             // Login using credentials provided by `knv.login.json`
-    				'LoginInfo' => $login,
+            'LoginInfo' => $login,
             // Starting a new database query
             'Suchen' => [
                 'Datenbank' => [
@@ -77,7 +77,7 @@ class KNV extends ProviderAbstract
                 // Returning the first result is alright, since given ISBN is unique
                 'SatzVon' => 1,
                 'SatzBis' => 1,
-    						'Format' => 'KNVXMLLangText',
+                'Format' => 'KNVXMLLangText',
                 'AuswahlMultimediaDaten' => [
                     // We only want the best cover they got - ZOOM mode ON!
                     'mmDatenLiefern' => true,
@@ -89,15 +89,15 @@ class KNV extends ProviderAbstract
         ]);
 
         // Getting raw XML response & preparing it to be loaded by SimpleXML
-    		$result = $query->Daten->Datensaetze->Record->ArtikelDaten;
-    		$result = str::replace($result, '&', '&amp;');
+        $result = $query->Daten->Datensaetze->Record->ArtikelDaten;
+        $result = str::replace($result, '&', '&amp;');
 
         // XML to JSON to PHP array - we want its last entry
-    		$xml = simplexml_load_string($result);
-    		$json = json_encode($xml);
-    		$array = (json_decode($json, true));
+        $xml = simplexml_load_string($result);
+        $json = json_encode($xml);
+        $array = (json_decode($json, true));
 
-    		return a::last($array);
+        return a::last($array);
     }
 
 
@@ -107,19 +107,20 @@ class KNV extends ProviderAbstract
      * .. if it exists
      *
      * @param array $array - Source PHP array to read data from
+     * @param array $arrayCSV - Second array, usually provided by CSV source file
      * @return string
      */
-    private function getAuthor($array, $arrayCSV = ['Titel' => ''])
+    private function getAuthor(array $array, array $arrayCSV = ['Titel' => ''])
     {
-    		if (a::missing($array, ['AutorSachtitel'])) {
-    				return '';
-    		}
+        if (a::missing($array, ['AutorSachtitel'])) {
+            return '';
+        }
 
-    		if ($arrayCSV['Titel'] == $array['AutorSachtitel']) {
-    				return '';
-    		}
+        if ($arrayCSV['Titel'] == $array['AutorSachtitel']) {
+            return '';
+        }
 
-    		return $array['AutorSachtitel'];
+        return $array['AutorSachtitel'];
     }
 
 
@@ -131,14 +132,14 @@ class KNV extends ProviderAbstract
      * @param array $array - Source PHP array to read data from
      * @return string
      */
-    private function getSubtitle($array)
+    private function getSubtitle(array $array)
     {
         if (a::missing($array, ['Utitel'])) {
             return '';
         }
 
-    		if ($array['Utitel'] == null) {
-    		    return '';
+        if ($array['Utitel'] == null) {
+            return '';
         }
 
         return $array['Utitel'];
@@ -153,7 +154,7 @@ class KNV extends ProviderAbstract
      * @param array $array - Source PHP array to read data from
      * @return string
      */
-    private function getYear($array)
+    private function getYear(array $array)
     {
         if (a::missing($array, ['Erschjahr'])) {
             return '';
@@ -171,7 +172,7 @@ class KNV extends ProviderAbstract
      * @param array $array - Source PHP array to read data from
      * @return string
      */
-    private function getText($array)
+    private function getText(array $array)
     {
         if (a::missing($array, ['Text1'])) {
             return 'Keine Beschreibung vorhanden!';
@@ -201,13 +202,13 @@ class KNV extends ProviderAbstract
      * @param array $array - Source PHP array to read data from
      * @return string
      */
-    private function getParticipants($array)
+    private function getParticipants(array $array)
     {
-    		if (a::missing($array, ['Mitarb'])) {
-    			return '';
-    		}
+        if (a::missing($array, ['Mitarb'])) {
+            return '';
+        }
 
-    		return $array['Mitarb'];
+        return $array['Mitarb'];
     }
 
 
@@ -217,12 +218,12 @@ class KNV extends ProviderAbstract
      * @param string $string - Abmessungen string
      * @return string
      */
-    private function convertMM($string)
+    private function convertMM(string $string)
     {
-    		$string = $string / 10;
-    		$string = str::replace($string, '.', ',');
+        $string = $string / 10;
+        $string = str::replace($string, '.', ',');
 
-    		return $string . 'cm';
+        return $string . 'cm';
     }
 
 
@@ -232,20 +233,20 @@ class KNV extends ProviderAbstract
      * @param array $array - Source PHP array to read data from
      * @return string
      */
-    private function getDimensions($array)
+    private function getDimensions(array $array)
     {
-    		if (a::missing($array, ['Breite'])) {
-    				return '';
-    		}
+        if (a::missing($array, ['Breite'])) {
+            return '';
+        }
 
-    		if (a::missing($array, ['Hoehe'])) {
-    				return '';
-    		}
+        if (a::missing($array, ['Hoehe'])) {
+            return '';
+        }
 
-    		$width = $this->convertMM($array['Breite']);
-    		$height = $this->convertMM($array['Hoehe']);
+        $width = $this->convertMM($array['Breite']);
+        $height = $this->convertMM($array['Hoehe']);
 
-    		return $width . ' x ' . $height;
+        return $width . ' x ' . $height;
     }
 
 
@@ -257,9 +258,9 @@ class KNV extends ProviderAbstract
      * @param array $array
      * @return string
      */
-    private function getCover($array)
+    private function getCover(array $array)
     {
-    		return $array['MULTIMEDIA']['MMUrl'];
+        return $array['MULTIMEDIA']['MMUrl'];
     }
 
 
@@ -285,23 +286,23 @@ class KNV extends ProviderAbstract
                 continue;
             }
 
-        		try {
-        		    $arrayKNV = [
-                    'AutorIn' => $this->getAuthor($book, $array),
-                    'Untertitel' => $this->getSubtitle($book),
-                    'Mitwirkende' => $this->getParticipants($book),
-        						'Erscheinungsjahr' => $this->getYear($book),
-        		        'Inhaltsbeschreibung' => $this->getText($book),
-                    'Abmessungen' => $this->getDimensions($book),
-        		        'Cover KNV' => $this->getCover($book),
-        		    ];
-        		} catch (\Exception $e) {
-        		    echo 'Error: ' . $e->getMessage(), "\n";
-        		}
+        try {
+            $arrayKNV = [
+                'AutorIn' => $this->getAuthor($book, $array),
+                'Untertitel' => $this->getSubtitle($book),
+                'Mitwirkende' => $this->getParticipants($book),
+                'Erscheinungsjahr' => $this->getYear($book),
+                'Inhaltsbeschreibung' => $this->getText($book),
+                'Abmessungen' => $this->getDimensions($book),
+                'Cover KNV' => $this->getCover($book),
+            ];
+        } catch (\Exception $e) {
+            echo 'Error: ' . $e->getMessage(), "\n";
+        }
 
-        		$array = a::update($array, array_filter($arrayKNV, 'strlen'));
+        $array = a::update($array, array_filter($arrayKNV, 'strlen'));
 
-            $dataOutput[] = $array;
+        $dataOutput[] = $array;
         }
 
         return $dataOutput;
