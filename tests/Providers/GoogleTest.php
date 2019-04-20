@@ -9,32 +9,30 @@
 
 namespace PCBIS2PDF\Tests;
 
+use PCBIS2PDF\Helpers\Butler;
 use PCBIS2PDF\Providers\Google;
 use PHPUnit\Framework\TestCase;
 
 class GoogleTest extends TestCase
 {
     private static $object;
+    private static $apiKey;
 
     public static function setUpBeforeClass(): void
     {
-        self::$object = new Google;
+        $key = getenv('GOOGLE_API_KEY');
+        self::$apiKey = $key ? $key : Butler::getLogin('Google')['key'];
+        self::$object = new Google(self::$apiKey);
     }
 
 
     public function test_getBook_Valid()
     {
         /*
-         * Preparations
-         */
-        $apiKey = getenv('GOOGLE_API_KEY');
-
-
-        /*
          * Assertions
          */
-        $this->assertIsArray(self::$object->getBook('0-14-031753-8', $apiKey)); // ISBN-10
-        $this->assertIsArray(self::$object->getBook('9780140317534', $apiKey)); // ISBN-13
+        $this->assertIsArray(self::$object->getBook('0-14-031753-8')); // ISBN-10
+        $this->assertIsArray(self::$object->getBook('9780140317534')); // ISBN-13
     }
 
 

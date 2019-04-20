@@ -26,14 +26,17 @@ class KNV extends ProviderAbstract
      * @param string $isbn
      * @return array|Exception
      */
-    public function getBook(string $isbn, array $login = null)
+    public function getBook(string $isbn)
     {
         try {
             Butler::validateISBN($isbn);
 
+            // TODO: TypeException for anything but arrays
+            $login = $this->login;
+
             if ($login === null) {
                 $provider = str::lower(basename(__FILE__, '.php'));
-                $login = $this->getLogin($provider);
+                $login = Butler::getLogin($provider);
             }
         } catch (\Exception $e) {
             throw $e;

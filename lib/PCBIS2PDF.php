@@ -120,10 +120,18 @@ class PCBIS2PDF
     ];
 
 
-    public function __construct(string $mode = 'normal', string $lang = 'de')
+    /**
+     * Work mode ('normal' & 'indesign' available)
+     *
+     * @var string
+     */
+    private $mode = 'normal';
+
+
+    public function __construct(array $login = null, string $lang = 'de')
     {
-        // Work mode - available options include 'normal' (default) & 'indesign'
-        $this->mode = $mode;
+        // Credentials for restricted APIs
+        $this->login = $login;
 
         // Feel free to open a pull request to include additional language variables
         // TODO: Extending language variables by local files or other means (eg passing an array)
@@ -203,6 +211,16 @@ class PCBIS2PDF
     public function getSortOrder()
     {
         return $this->sortOrder;
+    }
+
+    public function setMode(string $mode)
+    {
+        $this->mode = $mode;
+    }
+
+    public function getMode()
+    {
+        return $this->mode;
     }
 
 
@@ -546,7 +564,7 @@ class PCBIS2PDF
      * @param boolean $includeProviders - Whether to include third-party providers
      * @return array|InvalidArgumentException
      */
-    public function processData(array $dataInput = null, bool $downloadCovers = true, bool $includeProviders = false)
+    public function processData(array $dataInput = null, bool $downloadCovers = true)
     {
         if ($dataInput === null) {
             throw new \InvalidArgumentException('No data given to process.');
@@ -622,69 +640,24 @@ class PCBIS2PDF
             $data[] = $this->sortArray($array);
         }
 
-        $KNV = new KNV($this->cachePath);
+        $login = $this->login;
+
+        if ($login === null) {
+            $login = Butler::getLogin('knv');
+        }
+
+        $KNV = new KNV(
+            $login,
+            $this->cachePath
+        );
 
         try {
             $dataOutput = $KNV->processData($data);
-
-            if ($includeProviders === true) {
-                $dataOutput = includeProviders($dataOutput);
-            }
         } catch (\Exception $e) {
             echo 'Error: ' . $e->getMessage(), "\n";
         }
 
         echo 'Operation was successful!', "\n";
-        return a::sort($dataOutput, 'AutorIn', 'asc');
-    }
-
-
-    /**
-     * Enriches an array with specific provider information
-     *
-     * @param array $dataInput - Input that should be processed
-     * @return array|InvalidArgumentException
-     */
-    private function includeProviders(array $dataInput = null)
-    {
-        if ($dataInput === null) {
-            throw new \InvalidArgumentException('No data given to process.');
-        }
-
-        $providers = array_map(function ($filePath) {
-            $fileName = basename($filePath, '.php');
-            return $fileName;
-        }, glob(__DIR__ . '/Providers/*.php'));
-
-        // KNV is used by default, so we don't need to include it
-        unset($providers[array_search('KNV', $providers)]);
-
-        foreach ($providers as $provider) {
-            $providerName = ucfirst(strtolower($provider));
-            $className = 'PCBIS2PDF\\Providers\\' . $providerName;
-
-            if (!class_exists($className)) {
-                continue;
-            }
-
-            $classObject = new $className($this->cachePath);
-
-            if (!$classObject instanceof ProviderAbstract || !is_callable([$classObject, 'process'])) {
-                continue;
-            }
-
-            try {
-                $data = $classObject->processData($dataInput);
-            } catch (\Exception $e) {
-                echo 'Error: ' . $e->getMessage(), "\n";
-            }
-
-            if ($data) {
-                echo 'Operation by ' . $providerName . ' was successful!', "\n";
-                break;
-            }
-        }
-
         return a::sort($dataOutput, 'AutorIn', 'asc');
     }
 }

@@ -9,37 +9,34 @@
 
 namespace PCBIS2PDF\Tests;
 
+use PCBIS2PDF\Helpers\Butler;
 use PCBIS2PDF\Providers\KNV;
 use PHPUnit\Framework\TestCase;
 
 class KNVTest extends TestCase
 {
     private static $object;
-
+    private static $login;
 
     public static function setUpBeforeClass(): void
     {
-        self::$object = new KNV;
+        $credentials = [
+            'VKN' => getenv('VKN'),
+            'Benutzer' => getenv('BENUTZER'),
+            'Passwort' => getenv('PASSWORT'),
+        ];
+        self::$login = array_filter($credentials) ? $credentials : Butler::getLogin('KNV');
+        self::$object = new KNV(self::$login);
     }
 
 
     public function test_getBook_Valid()
     {
         /*
-         * Preparations
-         */
-        $login = [
-            'VKN' => getenv('VKN'),
-            'Benutzer' => getenv('BENUTZER'),
-            'Passwort' => getenv('PASSWORT'),
-        ];
-
-
-        /*
          * Assertions
          */
-        $this->assertIsArray(self::$object->getBook('0-14-031753-8', $login)); // ISBN-10
-        $this->assertIsArray(self::$object->getBook('9780140317534', $login)); // ISBN-13
+        $this->assertIsArray(self::$object->getBook('0-14-031753-8')); // ISBN-10
+        $this->assertIsArray(self::$object->getBook('9780140317534')); // ISBN-13
     }
 
 

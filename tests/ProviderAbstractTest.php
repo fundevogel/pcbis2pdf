@@ -12,4 +12,5 @@ namespace PCBIS2PDF\Tests;
 use PCBIS2PDF\ProviderAbstract;
 use PHPUnit\Framework\TestCase;
 
-class ProviderAbstractTest extends TestCase {}
+// TODO: Either delete this file or add some tests
+// class ProviderAbstractTest extends TestCase {}

@@ -27,14 +27,17 @@ class Google extends ProviderAbstract
      * @param string $isbn
      * @return array|boolean
      */
-    public function getBook(string $isbn, string $apiKey = null)
+    public function getBook(string $isbn)
     {
         try {
             Butler::validateISBN($isbn);
 
-            if ($apiKey === null) {
+            // TODO: TypeException for anything but strings
+            $apiKey = $this->login;
+
+            if ($this->login === null) {
                 $provider = str::lower(basename(__FILE__, '.php'));
-                $login = $this->getLogin($provider);
+                $login = Butler::getLogin($provider);
                 $apiKey = $login['key'];
             }
         } catch (\Exception $e) {

@@ -14,8 +14,11 @@ use Doctrine\Common\Cache\FilesystemCache;
 
 abstract class ProviderAbstract
 {
-    public function __construct(string $cachePath = './.cache')
+    public function __construct($login = null, string $cachePath = './.cache')
     {
+        // Credentials for restricted APIs
+        $this->login = $login;
+
         // Defines path for cached data
         $this->cachePath = $cachePath;
     }
@@ -44,26 +47,6 @@ abstract class ProviderAbstract
     /**
      * Common functionality
      */
-
-    /**
-     * Checks if `*.login.json` file for given provider exists an returns
-     * array with login information if that's the case
-     *
-     * @param string $provider - Provider name, eg 'KNV', 'Google', etc
-     * @return array|Exception
-     */
-    protected function getLogin(string $provider)
-    {
-        if (file_exists($file = realpath('./' . $provider . '.login.json'))) {
-            $json = file_get_contents($file);
-            $array = json_decode($json, true);
-
-            return $array;
-        }
-
-        throw new \Exception('No "' . $provider . '.login.json" found.');
-    }
-
 
     /**
      * Fetches book information from cache if they exist, otherwise loads them & saves to cache
