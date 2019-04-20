@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class GoogleTest extends TestCase
 {
-    private static $object;
     private static $apiKey;
+    private static $object;
 
     public static function setUpBeforeClass(): void
     {

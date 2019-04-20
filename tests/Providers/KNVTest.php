@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class KNVTest extends TestCase
 {
-    private static $object;
     private static $login;
+    private static $object;
 
     public static function setUpBeforeClass(): void
     {

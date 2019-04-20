@@ -10,16 +10,26 @@
 namespace PCBIS2PDF\Tests;
 
 use PCBIS2PDF\PCBIS2PDF;
+use PCBIS2PDF\Helpers\Butler;
 use PHPUnit\Framework\TestCase;
 
 class PCBIS2PDFTest extends TestCase
 {
+    private static $login;
     private static $object;
     private static $filePath;
 
     public static function setUpBeforeClass(): void
     {
-        self::$object = new PCBIS2PDF;
+        $credentials = [
+            'VKN' => getenv('VKN'),
+            'Benutzer' => getenv('BENUTZER'),
+            'Passwort' => getenv('PASSWORT'),
+        ];
+        self::$login = array_filter($credentials) ? $credentials : Butler::getLogin('KNV');
+        self::$object = new PCBIS2PDF(self::$login);
+
+        // Path to test resources for easier access
         self::$filePath = './tests/Resources';
 
         // Cleaning up all generated files for fresh start
@@ -218,7 +228,7 @@ class PCBIS2PDFTest extends TestCase
             ]
         ];
 
-        $object = new PCBIS2PDF;
+        $object = new PCBIS2PDF(self::$login);
         $actual = $object->processData($rawData, false);
 
 
