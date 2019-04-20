@@ -542,10 +542,11 @@ class PCBIS2PDF
      * Enriches an array with KNV information
      *
      * @param array $dataInput - Input that should be processed
+     * @param boolean $downloadCovers - Whether to download book covers on-the-fly
      * @param boolean $includeProviders - Whether to include third-party providers
      * @return array|InvalidArgumentException
      */
-    public function processData(array $dataInput = null, bool $includeProviders = false)
+    public function processData(array $dataInput = null, bool $downloadCovers = true, bool $includeProviders = false)
     {
         if ($dataInput === null) {
             throw new \InvalidArgumentException('No data given to process.');
@@ -583,12 +584,17 @@ class PCBIS2PDF
             $title = $this->convertTitle($array['Titel']);
             $slug = str::slug($title);
 
+            $downloaded = false;
+
+            if ($downloadCovers === true) {
+                $downloaded = $this->downloadCover($array['ISBN'], $slug);
+            }
+
             $cover = '';
             $coverDNB = '';
-            $download = $this->downloadCover($array['ISBN'], $slug);
             $imageName = $slug . '.jpg';
 
-            if ($download && file_exists($imagePath = $this->imagePath . '/' . $imageName)) {
+            if ($downloaded && file_exists($imagePath = $this->imagePath . '/' . $imageName)) {
                 // Although InDesign seems to support relative paths for images,
                 // we don't want to go through specifics by providing their absolute path
                 $cover = $this->mode == 'indesign' ? realpath($imagePath) : $imageName;

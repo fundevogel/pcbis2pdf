@@ -213,13 +213,13 @@ class PCBIS2PDFTest extends TestCase
                 'Einband' => 'gebunden',
                 'Seitenzahl' => 480,
                 'Abmessungen' => '15,2cm x 22,2cm',
-                '@Cover' => 'die-unendliche-geschichte.jpg',
-                'Cover DNB' => 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=978-3-522-20260-2',
+                '@Cover' => '',
+                'Cover DNB' => '',
             ]
         ];
 
         $object = new PCBIS2PDF;
-        $actual = $object->processData($rawData);
+        $actual = $object->processData($rawData, false);
 
 
         /*

@@ -29,9 +29,9 @@ class KNVTest extends TestCase
          * Preparations
          */
         $login = [
-            getenv('VKN'),
-            getenv('BENUTZER'),
-            getenv('PASSWORT'),
+            'VKN' => getenv('VKN'),
+            'Benutzer' => getenv('BENUTZER'),
+            'Passwort' => getenv('PASSWORT'),
         ];
 
 
