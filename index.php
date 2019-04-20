@@ -10,7 +10,7 @@ $object = new PCBIS2PDF\PCBIS2PDF;
 // Do it like this ..
 try {
     $fromCSV = $object->CSV2PHP('./example/Titelexport.csv', ';');
-    $array = $object->process($fromCSV);
+    $array = $object->processData($fromCSV);
     $object->PHP2CSV($array);
 } catch (\Exception $e) {
     echo 'Error: ' . $e->getMessage(), "\n";
