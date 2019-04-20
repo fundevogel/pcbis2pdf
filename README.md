@@ -1,4 +1,5 @@
 # pcbis2pdf
+[![Release](https://img.shields.io/github/release/Fundevogel/pcbis2pdf.svg)](https://github.com/Fundevogel/pcbis2pdf/releases)[![License](https://img.shields.io/github/license/Fundevogel/pcbis2pdf.svg)](https://github.com/Fundevogel/pcbis2pdf/blob/master/LICENSE)[![Issues](https://img.shields.io/github/issues/Fundevogel/pcbis2pdf.svg)](https://github.com/Fundevogel/pcbis2pdf/issues)[![Status](https://travis-ci.org/fundevogel/pcbis2pdf.svg?branch=master)](https://travis-ci.org/fundevogel/pcbis2pdf)
 
 ## What
 This small library powers [our example workflow](https://github.com/Fundevogel/book-recommendations) for collecting information from [CSV files](https://en.wikipedia.org/wiki/Comma-separated_values), exported from [pcbis.de](https://pcbis.de), and gathering some more through wholesale book distributor [KNV](http://knv.de)'s API (with built-in [Google Books API](https://developers.google.com/books) & [OpenLibrary Books API](https://openlibrary.org/dev/docs/api/books) support). For the documentation on their [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language) interface, see [here](http://www.knv.de/fileadmin/user_upload/IT/KNV_Webservice_2018.pdf).
@@ -59,7 +60,7 @@ Working with this library over some time, you may want to add the following comm
 
 
 ## Going beyond
-If you want to take things to a whole other level, you might enjoy [this gist](https://gist.github.com/S1SYPHOS/1fe7fcca6665e5fabc33c4e0244ceaea), generating optimized PDF files from just CSV files and corresponding SLA files (Scribus documents), sorted by issue / year / you-name-it.
+If you want to take things to a whole other level, you might enjoy [this gist](https://gist.github.com/Fundevogel/1fe7fcca6665e5fabc33c4e0244ceaea), generating optimized PDF files from just CSV files and corresponding SLA files (Scribus documents), sorted by issue / year / you-name-it.
 
 
 **Happy coding!**
