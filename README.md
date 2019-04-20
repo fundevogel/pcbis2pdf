@@ -46,10 +46,8 @@ Given this structure, you may automagically download book covers to `dist/images
 
 
 ## Advanced workflow
-Taking things one step further, you might want to inject the generated `dist/data.csv` and all downloaded images into a DTP template. In the following example (found inside the `example` directory) is using [Scribus](https://www.scribus.net), an open source desktop publishing software compatible with Windows, macOS & GNU/Linux.
+Taking things one step further, you might want to inject the generated `dist/data.csv` and all downloaded images into a DTP template. There's a usage example inside the `example` directory, which is using [Scribus](https://www.scribus.net), an open source desktop publishing software compatible with Windows, macOS & GNU/Linux.
 
-
-## Going beyond
 Working with this library over some time, you may want to add the following commands to your `composer.json` to automatize things even further (while executing them directly is fine as well):
 
 ```json
@@ -58,6 +56,11 @@ Working with this library over some time, you may want to add the following comm
     "print": "./vendor/berteh/scribusgenerator/ScribusGeneratorCLI.py --single -c ./dist/data.csv -o dist -n result src/dataList.sla",
 }
 ```
+
+
+## Going beyond
+If you want to take things to a whole other level, you might enjoy [this gist](https://gist.github.com/S1SYPHOS/1fe7fcca6665e5fabc33c4e0244ceaea), generating optimized PDF files from just CSV files and corresponding SLA files (Scribus documents), sorted by issue / year / you-name-it.
+
 
 **Happy coding!**
 
