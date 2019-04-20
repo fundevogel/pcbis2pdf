@@ -25,10 +25,16 @@ class GoogleTest extends TestCase
     public function test_getBook_Valid()
     {
         /*
+         * Preparations
+         */
+        $apiKey = getenv('GOOGLE_API_KEY');
+
+
+        /*
          * Assertions
          */
-        $this->assertIsArray(self::$object->getBook('0-14-031753-8')); // ISBN-10
-        $this->assertIsArray(self::$object->getBook('9780140317534')); // ISBN-13
+        $this->assertIsArray(self::$object->getBook('0-14-031753-8', $apiKey)); // ISBN-10
+        $this->assertIsArray(self::$object->getBook('9780140317534', $apiKey)); // ISBN-13
     }
 
 

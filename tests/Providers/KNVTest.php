@@ -26,10 +26,20 @@ class KNVTest extends TestCase
     public function test_getBook_Valid()
     {
         /*
+         * Preparations
+         */
+        $login = [
+            getenv('VKN'),
+            getenv('BENUTZER'),
+            getenv('PASSWORT'),
+        ];
+
+
+        /*
          * Assertions
          */
-        $this->assertIsArray(self::$object->getBook('0-14-031753-8')); // ISBN-10
-        $this->assertIsArray(self::$object->getBook('9780140317534')); // ISBN-13
+        $this->assertIsArray(self::$object->getBook('0-14-031753-8', $login)); // ISBN-10
+        $this->assertIsArray(self::$object->getBook('9780140317534', $login)); // ISBN-13
     }
 
 
