@@ -2,6 +2,8 @@
 
 namespace PCBIS2PDF\Helpers;
 
+if(!defined('MB')) define('MB', (int)function_exists('mb_get_info'));
+
 /**
  * Class Butler
  *
