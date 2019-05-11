@@ -5,9 +5,6 @@ namespace PCBIS2PDF\Providers;
 use PCBIS2PDF\ProviderAbstract;
 use PCBIS2PDF\Helpers\Butler;
 
-use a;
-use str;
-
 /**
  * Class KNV
  *
@@ -35,7 +32,7 @@ class KNV extends ProviderAbstract
             $login = $this->login;
 
             if ($login === null) {
-                $provider = str::lower(basename(__FILE__, '.php'));
+                $provider = Butler::lower(basename(__FILE__, '.php'));
                 $login = Butler::getLogin($provider);
             }
         } catch (\Exception $e) {
@@ -93,14 +90,14 @@ class KNV extends ProviderAbstract
 
         // Getting raw XML response & preparing it to be loaded by SimpleXML
         $result = $query->Daten->Datensaetze->Record->ArtikelDaten;
-        $result = str::replace($result, '&', '&amp;');
+        $result = Butler::replace($result, '&', '&amp;');
 
         // XML to JSON to PHP array - we want its last entry
         $xml = simplexml_load_string($result);
         $json = json_encode($xml);
         $array = (json_decode($json, true));
 
-        return a::last($array);
+        return Butler::last($array);
     }
 
 
@@ -115,7 +112,7 @@ class KNV extends ProviderAbstract
      */
     private function getAuthor(array $array, array $arrayCSV = ['Titel' => ''])
     {
-        if (a::missing($array, ['AutorSachtitel'])) {
+        if (Butler::missing($array, ['AutorSachtitel'])) {
             return '';
         }
 
@@ -137,7 +134,7 @@ class KNV extends ProviderAbstract
      */
     private function getSubtitle(array $array)
     {
-        if (a::missing($array, ['Utitel'])) {
+        if (Butler::missing($array, ['Utitel'])) {
             return '';
         }
 
@@ -159,7 +156,7 @@ class KNV extends ProviderAbstract
      */
     private function getYear(array $array)
     {
-        if (a::missing($array, ['Erschjahr'])) {
+        if (Butler::missing($array, ['Erschjahr'])) {
             return '';
         }
 
@@ -177,23 +174,23 @@ class KNV extends ProviderAbstract
      */
     private function getText(array $array)
     {
-        if (a::missing($array, ['Text1'])) {
+        if (Butler::missing($array, ['Text1'])) {
             return 'Keine Beschreibung vorhanden!';
         }
 
-        $textArray = str::split($array['Text1'], 'º');
+        $textArray = Butler::split($array['Text1'], 'º');
 
         foreach ($textArray as $index => $entry) {
             $entry = htmlspecialchars_decode($entry);
-            $entry = str::replace($entry, '<br><br>', '. ');
-            $entry = str::unhtml($entry);
+            $entry = Butler::replace($entry, '<br><br>', '. ');
+            $entry = Butler::unhtml($entry);
             $textArray[$index] = $entry;
 
-            if (str::length($textArray[$index]) < 130 && count($textArray) > 1) {
+            if (Butler::length($textArray[$index]) < 130 && count($textArray) > 1) {
                 unset($textArray[array_search($entry, $textArray)]);
             }
         }
-        return a::first($textArray);
+        return Butler::first($textArray);
     }
 
 
@@ -207,7 +204,7 @@ class KNV extends ProviderAbstract
      */
     private function getParticipants(array $array)
     {
-        if (a::missing($array, ['Mitarb'])) {
+        if (Butler::missing($array, ['Mitarb'])) {
             return '';
         }
 
@@ -224,7 +221,7 @@ class KNV extends ProviderAbstract
     private function convertMM(string $string)
     {
         $string = $string / 10;
-        $string = str::replace($string, '.', ',');
+        $string = Butler::replace($string, '.', ',');
 
         return $string . 'cm';
     }
@@ -238,11 +235,11 @@ class KNV extends ProviderAbstract
      */
     private function getDimensions(array $array)
     {
-        if (a::missing($array, ['Breite'])) {
+        if (Butler::missing($array, ['Breite'])) {
             return '';
         }
 
-        if (a::missing($array, ['Hoehe'])) {
+        if (Butler::missing($array, ['Hoehe'])) {
             return '';
         }
 
@@ -303,7 +300,7 @@ class KNV extends ProviderAbstract
             echo 'Error: ' . $e->getMessage(), "\n";
         }
 
-        $array = a::update($array, array_filter($arrayKNV, 'strlen'));
+        $array = Butler::update($array, array_filter($arrayKNV, 'strlen'));
 
         $dataOutput[] = $array;
         }

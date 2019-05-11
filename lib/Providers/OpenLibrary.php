@@ -6,9 +6,6 @@ use PCBIS2PDF\ProviderAbstract;
 use PCBIS2PDF\Helpers\Butler;
 use GuzzleHttp\Client;
 
-use a;
-use str;
-
 /**
  * Class OpenLibrary
  *
@@ -39,7 +36,7 @@ class OpenLibrary extends ProviderAbstract
 
         $query = $client->request('GET', 'https://openlibrary.org/api/books', [
             'query' => [
-                'bibkeys' => 'ISBN:' . str::replace($isbn, '-', ''),
+                'bibkeys' => 'ISBN:' . Butler::replace($isbn, '-', ''),
                 'format' => 'json',
                 'jscmd' => 'data',
             ],
@@ -50,7 +47,7 @@ class OpenLibrary extends ProviderAbstract
             $array = json_decode($string, true);
 
             if (!empty($array)) {
-                return a::first($array);
+                return Butler::first($array);
             }
         }
 
@@ -76,15 +73,15 @@ class OpenLibrary extends ProviderAbstract
             try {
                 $book = $this->accessCache($array['ISBN'], 'OpenLibrary');
                 $arrayOpenLibrary = [
-                    // 'Datum' => a::missing($book, ['publish_date']) ? '' : $book['publish_date'],
-                    // 'Seitenzahl' => a::missing($book, ['number_of_pages']) ? '' : $book['number_of_pages'],
+                    // 'Datum' => Butler::missing($book, ['publish_date']) ? '' : $book['publish_date'],
+                    // 'Seitenzahl' => Butler::missing($book, ['number_of_pages']) ? '' : $book['number_of_pages'],
                     // 'Cover OpenLibrary' => '',
                 ];
             } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage(), "\n";
             }
 
-            $array = a::update($array, array_filter($arrayOpenLibrary, 'strlen'));
+            $array = Butler::update($array, array_filter($arrayOpenLibrary, 'strlen'));
 
             $dataOutput[] = $array;
         }

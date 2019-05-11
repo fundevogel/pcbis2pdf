@@ -63,6 +63,10 @@ Working with this library over some time, you may want to add the following comm
 If you want to take things to a whole other level, you might enjoy [this gist](https://gist.github.com/Fundevogel/1fe7fcca6665e5fabc33c4e0244ceaea), generating optimized PDF files from just CSV files and corresponding SLA files (Scribus documents), sorted by issue / year / you-name-it.
 
 
+## Credits
+Most of the helper functions were taken from [Kirby](https://getkirby.com)'s excellent [`toolkit`](https://github.com/getkirby-v2/toolkit) package by [Bastian Allgeier](https://github.com/bastianallgeier) (who's just awesome, btw). 
+
+
 **Happy coding!**
 
 

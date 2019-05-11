@@ -6,9 +6,6 @@ use PCBIS2PDF\ProviderAbstract;
 use PCBIS2PDF\Helpers\Butler;
 use Scriptotek\GoogleBooks\GoogleBooks;
 
-use a;
-use str;
-
 /**
  * Class Google
  *
@@ -36,7 +33,7 @@ class Google extends ProviderAbstract
             $apiKey = $this->login;
 
             if ($this->login === null) {
-                $provider = str::lower(basename(__FILE__, '.php'));
+                $provider = Butler::lower(basename(__FILE__, '.php'));
                 $login = Butler::getLogin($provider);
                 $apiKey = $login['key'];
             }
@@ -73,16 +70,16 @@ class Google extends ProviderAbstract
             try {
                 $book = $this->accessCache($array['ISBN'], 'Google');
                 $arrayGoogle = [
-                    // 'AutorIn' => a::missing($book, ['authors']) ? '' : implode(' & ', $book['authors']),
-                    // 'Datum' => a::missing($book, ['publishedDate']) ? '' : date('d.m.Y', strtotime($book['publishedDate'])),
-                    // 'Seitenzahl' => a::missing($book, ['pageCount']) ? '' : $book['pageCount'],
+                    // 'AutorIn' => Butler::missing($book, ['authors']) ? '' : implode(' & ', $book['authors']),
+                    // 'Datum' => Butler::missing($book, ['publishedDate']) ? '' : date('d.m.Y', strtotime($book['publishedDate'])),
+                    // 'Seitenzahl' => Butler::missing($book, ['pageCount']) ? '' : $book['pageCount'],
                     // 'Cover Google' => '',
                 ];
             } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage(), "\n";
             }
 
-            $array = a::update($array, array_filter($arrayGoogle, 'strlen'));
+            $array = Butler::update($array, array_filter($arrayGoogle, 'strlen'));
 
             $dataOutput[] = $array;
         }

@@ -12,9 +12,6 @@ namespace PCBIS2PDF;
 use PCBIS2PDF\Providers\KNV;
 use PCBIS2PDF\Helpers\Butler;
 
-use a;
-use str;
-
 /**
  * Class PCBIS2PDF
  *
@@ -30,7 +27,7 @@ class PCBIS2PDF
     /**
      * Current version number of PCBIS2PDF
      */
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.2';
 
 
     /**
@@ -362,39 +359,39 @@ class PCBIS2PDF
 
         foreach ($array as $entry) {
             // Remove garbled book dimensions
-            if (str::contains($entry, ' cm') || str::contains($entry, ' mm')) {
+            if (Butler::contains($entry, ' cm') || Butler::contains($entry, ' mm')) {
                 unset($array[array_search($entry, $array)]);
             }
 
             // Filtering age
-            if (str::contains($entry, ' J.') || str::contains($entry, ' Mon.')) {
+            if (Butler::contains($entry, ' J.') || Butler::contains($entry, ' Mon.')) {
                 $age = $this->convertAge($entry);
                 unset($array[array_search($entry, $array)]);
             }
 
             // Filtering page count
-            if (str::contains($entry, ' S.')) {
+            if (Butler::contains($entry, ' S.')) {
                 $pageCount = $this->convertPageCount($entry);
                 unset($array[array_search($entry, $array)]);
             }
 
             // Filtering year (almost always right at this point)
-            if (str::length($entry) == 4) {
+            if (Butler::length($entry) == 4) {
                 $year = $entry;
                 unset($array[array_search($entry, $array)]);
             }
         }
 
         $strings = $this->translations['information'];
-        $array = str::replace($array,
+        $array = Butler::replace($array,
             array_keys($strings),
             array_values($strings)
         );
 
         $info = ucfirst(implode(', ', $array));
 
-        if (str::length($info) > 0) {
-            $info = str::replace($info, '.', '') . '.';
+        if (Butler::length($info) > 0) {
+            $info = Butler::replace($info, '.', '') . '.';
         }
 
         return [
@@ -416,7 +413,7 @@ class PCBIS2PDF
     {
         // Input: Book title.
         // Output: Book title
-        return str::substr($string, 0, -1);
+        return Butler::substr($string, 0, -1);
     }
 
 
@@ -428,10 +425,10 @@ class PCBIS2PDF
      */
     private function convertAge($string)
     {
-      	$string = str::replace($string, 'J.', 'Jahren');
-      	$string = str::replace($string, 'Mon.', 'Monaten');
-      	$string = str::replace($string, '-', ' bis ');
-      	$string = str::replace($string, 'u.', '&');
+      	$string = Butler::replace($string, 'J.', 'Jahren');
+      	$string = Butler::replace($string, 'Mon.', 'Monaten');
+      	$string = Butler::replace($string, '-', ' bis ');
+      	$string = Butler::replace($string, 'u.', '&');
 
       	return $string;
     }
@@ -474,8 +471,8 @@ class PCBIS2PDF
     {
         // Input: XX.YY EUR
         // Output: XX,YY €
-        $string = str::replace($string, 'EUR', '€');
-        $string = str::replace($string, '.', ',');
+        $string = Butler::replace($string, 'EUR', '€');
+        $string = Butler::replace($string, '.', ',');
 
         return $string;
     }
@@ -585,10 +582,10 @@ class PCBIS2PDF
 
             // Gathering & processing generic book information
             $infoString = $array['Informationen'];
-            $infoArray = str::split($infoString, ';');
+            $infoArray = Butler::split($infoString, ';');
 
             if (count($infoArray) === 1) {
-                $infoArray = str::split($infoString, '.');
+                $infoArray = Butler::split($infoString, '.');
             }
 
             // Extracting variables from $infoArray
@@ -601,7 +598,7 @@ class PCBIS2PDF
 
             // Title, cover & image download
             $title = $this->convertTitle($array['Titel']);
-            $slug = str::slug($title);
+            $slug = Butler::slug($title);
 
             $downloaded = false;
 
@@ -620,7 +617,7 @@ class PCBIS2PDF
                 $coverDNB = 'https://portal.dnb.de/opac/mvb/cover.htm?isbn=' . $array['ISBN'];
             }
 
-            $array = a::update($array, [
+            $array = Butler::update($array, [
                 // Updating existing entries + adding blanks to prevent columns from shifting
                 'Titel' => $title,
                 'Untertitel' => '',
@@ -659,6 +656,6 @@ class PCBIS2PDF
         }
 
         echo 'Operation was successful!', "\n";
-        return a::sort($dataOutput, 'AutorIn', 'asc');
+        return Butler::sort($dataOutput, 'AutorIn', 'asc');
     }
 }
