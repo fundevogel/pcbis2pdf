@@ -18,7 +18,6 @@
         }
     ],
     "require": {
-        "berteh/scribusgenerator": "dev-master",
         "doctrine/cache": "^1.8",
         "getkirby/toolkit": "^2.5",
         "guzzlehttp/guzzle": "^6.3",
@@ -27,6 +26,9 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
         "phpunit/phpunit": "^8.1"
+    },
+    "suggest": {
+        "berteh/scribusgenerator": "dev-master"
     },
     "autoload": {
         "psr-4": {
