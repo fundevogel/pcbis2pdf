@@ -543,6 +543,7 @@ class PCBIS2PDF
      *
      * @param array $array - Input that should be sorted
      * @return array
+     * TODO: https://www.php.net/manual/en/function.usort.php#25360
      */
     private function sortArray(array $array)
     {
